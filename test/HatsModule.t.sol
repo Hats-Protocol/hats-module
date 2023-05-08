@@ -36,6 +36,12 @@ contract DeployImplementation is HatsModuleTest {
   function test_version() public {
     assertEq(impl.version_(), MODULE_VERSION, "incorrect module version");
   }
+
+  function test_setUp_cannotBeCalled() public {
+    // expect revert if setUp is called
+    vm.expectRevert();
+    impl.setUp(abi.encode("setUp attempt"));
+  }
 }
 
 contract DeployInstance is HatsModuleTest {
