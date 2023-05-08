@@ -1,0 +1,69 @@
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.18;
+
+import { Test, console2 } from "forge-std/Test.sol";
+import { HatsModule, HatsModuleFactory, IHats, Deploy, HatsModuleFactoryTest } from "../test/HatsModuleFactory.t.sol";
+
+contract HatsModuleHarness is HatsModule {
+  event HatsModuleHarness_SetUp(bytes initData);
+
+  constructor(string memory version) HatsModule(version) { }
+
+  function getImmutableBytes(uint256 length) public pure returns (bytes memory) {
+    return _getArgBytes(72, length);
+  }
+
+  function setUp(bytes memory _initData) public override initializer {
+    emit HatsModuleHarness_SetUp(_initData);
+  }
+}
+
+contract HatsModuleTest is HatsModuleFactoryTest {
+  event HatsModuleHarness_SetUp(bytes initData);
+
+  HatsModuleHarness public impl;
+  HatsModuleHarness public inst;
+  uint256 public largeBytesLength = largeBytes.length;
+
+  function setUp() public virtual override {
+    super.setUp();
+    // deploy a new HatsModuleHarness as an implementation contract
+    impl = new HatsModuleHarness(MODULE_VERSION);
+  }
+}
+
+contract DeployModule is HatsModuleTest {
+  function setUp() public override {
+    super.setUp();
+
+    // set up parameters for a new instance
+    hatId = hat1_1;
+    otherArgs = largeBytes;
+    initData = abi.encode("this is init data");
+  }
+
+  function test_immutables() public {
+    // deploy an instance of HatsModuleHarness via the factory
+    inst = HatsModuleHarness(factory.createHatsModule(address(impl), hatId, otherArgs, initData));
+
+    assertEq(address(inst.IMPLEMENTATION()), address(impl), "incorrect implementation address");
+    assertEq(address(inst.HATS()), address(hats), "incorrect hats address");
+    assertEq(inst.hatId(), hatId, "incorrect hatId");
+    assertEq(inst.getImmutableBytes(largeBytesLength), largeBytes, "incorrect otherArgs");
+  }
+
+  function test_version() public {
+    // deploy an instance of HatsModuleHarness via the factory
+    inst = HatsModuleHarness(factory.createHatsModule(address(impl), hatId, otherArgs, initData));
+
+    assertEq(inst.version(), MODULE_VERSION, "incorrect module version");
+  }
+
+  function test_initData() public {
+    // expect event emitted with the initData
+    vm.expectEmit(true, true, true, true);
+    emit HatsModuleHarness_SetUp(initData);
+    // deploy an instance of HatsModuleHarness via the factory
+    inst = HatsModuleHarness(factory.createHatsModule(address(impl), hatId, otherArgs, initData));
+  }
+}
