@@ -32,7 +32,13 @@ contract HatsModuleTest is HatsModuleFactoryTest {
   }
 }
 
-contract DeployModule is HatsModuleTest {
+contract DeployImplementation is HatsModuleTest {
+  function test_version() public {
+    assertEq(impl.version_(), MODULE_VERSION, "incorrect module version");
+  }
+}
+
+contract DeployInstance is HatsModuleTest {
   function setUp() public override {
     super.setUp();
 
@@ -40,6 +46,16 @@ contract DeployModule is HatsModuleTest {
     hatId = hat1_1;
     otherArgs = largeBytes;
     initData = abi.encode("this is init data");
+  }
+
+  function test_deployEvent() public {
+    // expect event emitted with the initData
+    vm.expectEmit(true, true, true, true);
+    emit HatsModuleFactory_ModuleDeployed(
+      address(impl), factory.getHatsModuleAddress(address(impl), hatId, otherArgs), hatId, otherArgs, initData
+    );
+    // deploy an instance of HatsModuleHarness via the factory
+    inst = HatsModuleHarness(factory.createHatsModule(address(impl), hatId, otherArgs, initData));
   }
 
   function test_immutables() public {
@@ -57,6 +73,15 @@ contract DeployModule is HatsModuleTest {
     inst = HatsModuleHarness(factory.createHatsModule(address(impl), hatId, otherArgs, initData));
 
     assertEq(inst.version(), MODULE_VERSION, "incorrect module version");
+  }
+
+  function test_setUp_cannotBeCalledTwice() public {
+    // deploy an instance of HatsModuleHarness via the factory
+    inst = HatsModuleHarness(factory.createHatsModule(address(impl), hatId, otherArgs, initData));
+
+    // expect revert if setUp is called again
+    vm.expectRevert();
+    inst.setUp(abi.encode("another setUp attempt"));
   }
 
   function test_initData() public {
