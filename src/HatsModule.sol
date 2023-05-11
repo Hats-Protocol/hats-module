@@ -66,7 +66,7 @@ contract HatsModule is Clone, Initializable {
    * @dev This function can only be called once, on initialization
    * @param _initData Data to set up initial operational values for this instance
    */
-  function setUp(bytes memory _initData) public virtual initializer { }
+  function setUp(bytes calldata _initData) public virtual initializer { }
 
   /*//////////////////////////////////////////////////////////////
                             CONSTRUCTOR

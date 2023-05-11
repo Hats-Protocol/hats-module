@@ -13,7 +13,7 @@ contract HatsModuleHarness is HatsModule {
     return _getArgBytes(72, length);
   }
 
-  function setUp(bytes memory _initData) public override initializer {
+  function setUp(bytes calldata _initData) public override initializer {
     emit HatsModuleHarness_SetUp(_initData);
   }
 }
