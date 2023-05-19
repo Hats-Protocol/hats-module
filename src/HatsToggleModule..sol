@@ -5,7 +5,7 @@ pragma solidity ^0.8.18;
 import { HatsModule } from "src/HatsModule.sol";
 import { IHatsToggle } from "hats-protocol/Interfaces/IHatsToggle.sol";
 
-abstract contract HatsEligibilityModule is HatsModule, IHatsToggle {
+abstract contract HatsToggleModule is HatsModule, IHatsToggle {
   /**
    * @dev Contracts that inherit from HatsToggleModule must call the HatsModule constructor:
    * `HatsModule(_version)`.
