@@ -2,7 +2,8 @@
 pragma solidity ^0.8.18;
 
 import { Test, console2 } from "forge-std/Test.sol";
-import { HatsModule, HatsModuleFactory, IHats, Deploy, HatsModuleFactoryTest } from "../test/HatsModuleFactory.t.sol";
+import { HatsModule, IHats, Deploy, HatsModuleFactoryTest } from "../test/HatsModuleFactory.t.sol";
+import { HatsModuleFactory, deployModuleInstance } from "src/utils/DeployFunctions.sol";
 
 contract HatsModuleHarness is HatsModule {
   event HatsModuleHarness_SetUp(bytes initData);
@@ -61,12 +62,13 @@ contract DeployInstance is HatsModuleTest {
       address(impl), factory.getHatsModuleAddress(address(impl), hatId, otherArgs), hatId, otherArgs, initData
     );
     // deploy an instance of HatsModuleHarness via the factory
-    inst = HatsModuleHarness(factory.createHatsModule(address(impl), hatId, otherArgs, initData));
+    // inst = HatsModuleHarness(factory.createHatsModule(address(impl), hatId, otherArgs, initData));
+    inst = HatsModuleHarness(deployModuleInstance(factory, address(impl), hatId, otherArgs, initData));
   }
 
   function test_immutables() public {
     // deploy an instance of HatsModuleHarness via the factory
-    inst = HatsModuleHarness(factory.createHatsModule(address(impl), hatId, otherArgs, initData));
+    inst = HatsModuleHarness(deployModuleInstance(factory, address(impl), hatId, otherArgs, initData));
 
     assertEq(address(inst.IMPLEMENTATION()), address(impl), "incorrect implementation address");
     assertEq(address(inst.HATS()), address(hats), "incorrect hats address");
@@ -76,14 +78,14 @@ contract DeployInstance is HatsModuleTest {
 
   function test_version() public {
     // deploy an instance of HatsModuleHarness via the factory
-    inst = HatsModuleHarness(factory.createHatsModule(address(impl), hatId, otherArgs, initData));
+    inst = HatsModuleHarness(deployModuleInstance(factory, address(impl), hatId, otherArgs, initData));
 
     assertEq(inst.version(), MODULE_VERSION, "incorrect module version");
   }
 
   function test_setUp_cannotBeCalledTwice() public {
     // deploy an instance of HatsModuleHarness via the factory
-    inst = HatsModuleHarness(factory.createHatsModule(address(impl), hatId, otherArgs, initData));
+    inst = HatsModuleHarness(deployModuleInstance(factory, address(impl), hatId, otherArgs, initData));
 
     // expect revert if setUp is called again
     vm.expectRevert();
@@ -95,6 +97,6 @@ contract DeployInstance is HatsModuleTest {
     vm.expectEmit(true, true, true, true);
     emit HatsModuleHarness_SetUp(initData);
     // deploy an instance of HatsModuleHarness via the factory
-    inst = HatsModuleHarness(factory.createHatsModule(address(impl), hatId, otherArgs, initData));
+    inst = HatsModuleHarness(deployModuleInstance(factory, address(impl), hatId, otherArgs, initData));
   }
 }

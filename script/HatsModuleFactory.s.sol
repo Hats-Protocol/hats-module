@@ -2,7 +2,7 @@
 pragma solidity ^0.8.18;
 
 import { Script, console2 } from "forge-std/Script.sol";
-import { HatsModule, HatsModuleFactory, IHats } from "../src/HatsModuleFactory.sol";
+import { HatsModule, HatsModuleFactory, IHats, deployModuleFactory } from "src/utils/DeployFunctions.sol";
 
 contract Deploy is Script {
   HatsModuleFactory public factory;
@@ -24,7 +24,7 @@ contract Deploy is Script {
     address deployer = vm.rememberKey(privKey);
     vm.startBroadcast(deployer);
 
-    factory = new HatsModuleFactory{ salt: SALT}(hats, version);
+    factory = deployModuleFactory(hats, SALT, version);
 
     vm.stopBroadcast();
 
