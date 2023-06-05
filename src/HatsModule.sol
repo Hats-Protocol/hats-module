@@ -3,10 +3,11 @@ pragma solidity ^0.8.18;
 
 // import { console2 } from "forge-std/Test.sol"; // remove before deploy
 import { IHats } from "hats-protocol/Interfaces/IHats.sol";
+import { IHatsModule } from "src/interfaces/IHatsModule.sol";
 import { Clone } from "solady/utils/Clone.sol";
 import { Initializable } from "@openzeppelin-contracts/contracts/proxy/utils/Initializable.sol";
 
-contract HatsModule is Clone, Initializable {
+contract HatsModule is IHatsModule, Clone, Initializable {
   /*//////////////////////////////////////////////////////////////
                           PUBLIC CONSTANTS
   //////////////////////////////////////////////////////////////*/
@@ -33,26 +34,25 @@ contract HatsModule is Clone, Initializable {
    * --------------------------------------------------------------------+
    */
 
-  /// @notice The address of the implementation contract of which this instance is a clone
+  /// @inheritdoc IHatsModule
   function IMPLEMENTATION() public pure returns (address) {
     return _getArgAddress(0);
   }
 
-  /// @notice Hats Protocol address
+  /// @inheritdoc IHatsModule
   function HATS() public pure returns (IHats) {
     return IHats(_getArgAddress(20));
   }
 
-  /// @notice The hat id for which this HatsModule instance has been deployed
+  /// @inheritdoc IHatsModule
   function hatId() public pure returns (uint256) {
     return _getArgUint256(40);
   }
 
-  /// @notice The version of this HatsModule
-  /// @dev Used only for the implementation contract; for clones, use {version}
+  /// @inheritdoc IHatsModule
   string public version_;
 
-  /// @notice The version of this HatsModule
+  /// @inheritdoc IHatsModule
   function version() public view returns (string memory) {
     return HatsModule(IMPLEMENTATION()).version_();
   }
@@ -61,11 +61,7 @@ contract HatsModule is Clone, Initializable {
                             INITIALIZER
   //////////////////////////////////////////////////////////////*/
 
-  /**
-   * @notice Sets up this instance with initial operational values (`_initData`)
-   * @dev This function can only be called once, on initialization
-   * @param _initData Data to set up initial operational values for this instance
-   */
+  /// @inheritdoc IHatsModule
   function setUp(bytes calldata _initData) public virtual initializer { }
 
   /*//////////////////////////////////////////////////////////////
