@@ -2,7 +2,7 @@
 pragma solidity ^0.8.18;
 
 // import { console2 } from "forge-std/Test.sol"; // remove before deploy
-import { HatsModule } from "src/HatsModule.sol";
+import { HatsModule } from "./HatsModule.sol";
 import { IHatsEligibility } from "hats-protocol/Interfaces/IHatsEligibility.sol";
 
 abstract contract HatsEligibilityModule is HatsModule, IHatsEligibility {

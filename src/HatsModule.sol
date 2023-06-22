@@ -3,7 +3,7 @@ pragma solidity ^0.8.18;
 
 // import { console2 } from "forge-std/Test.sol"; // remove before deploy
 import { IHats } from "hats-protocol/Interfaces/IHats.sol";
-import { IHatsModule } from "src/interfaces/IHatsModule.sol";
+import { IHatsModule } from "./interfaces/IHatsModule.sol";
 import { Clone } from "solady/utils/Clone.sol";
 import { Initializable } from "@openzeppelin-contracts/contracts/proxy/utils/Initializable.sol";
 

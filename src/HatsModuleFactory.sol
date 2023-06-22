@@ -2,7 +2,7 @@
 pragma solidity ^0.8.18;
 
 // import { console2 } from "forge-std/Test.sol"; // remove before deploy
-import { HatsModule } from "src/HatsModule.sol";
+import { HatsModule } from "./HatsModule.sol";
 import { LibClone } from "solady/utils/LibClone.sol";
 import { IHats } from "hats-protocol/Interfaces/IHats.sol";
 
