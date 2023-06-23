@@ -6,7 +6,8 @@ import { HatsEligibilityModule } from "src/HatsEligibilityModule.sol";
 import { HatsModule } from "src/HatsModule.sol";
 import { IERC721 } from "@openzeppelin-contracts/contracts/token/ERC721/IERC721.sol";
 
-contract ERC721HatsEligibilityModule is HatsEligibilityModule {
+//Hats Eligibility Module that currently checks if addresses meet a minimum balance of a preset ERC721 token
+contract ERC721EligibilityModule is HatsEligibilityModule {
   /*//////////////////////////////////////////////////////////////
                           PUBLIC CONSTANTS
     //////////////////////////////////////////////////////////////*/
@@ -21,8 +22,8 @@ contract ERC721HatsEligibilityModule is HatsEligibilityModule {
    * 0       | IMPLEMENTATION  | address | 20      |                     |
    * 20      | HATS            | address | 20      |                     |
    * 40      | hatId           | uint256 | 32      |                     |
-   * 72      | TOKENADDRESS    | address | 20      |                     |
-   * 92      | MINBALANCE      | uint256 | 32      |                     |
+   * 72      | TOKEN_ADDRESS   | address | 20      |                     |
+   * 92      | MIN_BALANCE     | uint256 | 32      |                     |
    * --------------------------------------------------------------------+
    */
 
@@ -55,8 +56,7 @@ contract ERC721HatsEligibilityModule is HatsEligibilityModule {
   function getWearerStatus(
     address _wearer,
     uint256 /*_hatId */
-  ) public view returns (bool eligible, bool standing) {
-    //check balance
+  ) override public view returns (bool eligible, bool standing) {
     uint256 balance = IERC721(TOKEN_ADDRESS()).balanceOf(_wearer);
     eligible = balance >= MIN_BALANCE() ? true : false;
 

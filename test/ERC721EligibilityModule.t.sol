@@ -4,7 +4,7 @@ pragma solidity ^0.8.18;
 import { Test, console2 } from "forge-std/Test.sol";
 import { HatsModule, HatsModuleFactory, IHats, Deploy } from "../script/HatsModuleFactory.s.sol";
 import { ERC721 } from "@openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
-import { ERC721HatsEligibilityModule } from "src/ERC721HatsEligibilityModule.sol";
+import { ERC721EligibilityModule } from "src/ERC721EligibilityModule.sol";
 
 contract MintableERC721 is ERC721 {
   constructor() ERC721("Test NFT", "TNFT") { }
@@ -14,14 +14,14 @@ contract MintableERC721 is ERC721 {
   }
 }
 
-contract ERC721HatsElibilityModule is Deploy, Test {
+contract ERC721EligibilityModuleTest is Deploy, Test {
   string public FACTORY_VERSION = "test factory";
   uint256 public MIN_BALANCE = 1;
   address[] public addresses = [address(1), address(2), address(3)];
 
-  ERC721HatsEligibilityModule public moduleInstance;
+  ERC721EligibilityModule public moduleInstance;
   MintableERC721 public mintableERC721;
-  ERC721HatsEligibilityModule public erc721Module;
+  ERC721EligibilityModule public erc721Module;
 
   function setUp() external {
     //deploy HatsModuleFactory
@@ -35,17 +35,17 @@ contract ERC721HatsElibilityModule is Deploy, Test {
     mintableERC721.mint(addresses[2], 3);
 
     //deploy ERC721HatsEligbilityModule implementation
-    erc721Module = new ERC721HatsEligibilityModule("test implementation");
+    erc721Module = new ERC721EligibilityModule("test implementation");
 
     //create ERC721HatsEligbilityModule instance
-    moduleInstance = ERC721HatsEligibilityModule(
+    moduleInstance = ERC721EligibilityModule(
       factory.createHatsModule(address(erc721Module), 0, abi.encodePacked(address(mintableERC721), MIN_BALANCE), "")
     );
   }
 
   function testImmutableArgs() external {
     assertEq(moduleInstance.TOKEN_ADDRESS(), address(mintableERC721), "incorrect token address");
-    assertEq(moduleInstance.MIN_BALANCE(), MIN_BALANCE, "incorrect token address");
+    assertEq(moduleInstance.MIN_BALANCE(), MIN_BALANCE, "incorrect min balance");
   }
 
   function testIneligibleWearer() external {
