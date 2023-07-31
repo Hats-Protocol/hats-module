@@ -17,6 +17,9 @@ contract HatsModuleFactory {
   /// HatsModule deployment
   error HatsModuleFactory_ModuleAlreadyDeployed(address implementation, uint256 hatId, bytes otherImmutableArgs);
 
+  /// @notice Emitted when array arguments to a batch function have mismatching lengths
+  error BatchArrayLengthMismatch();
+
   /*//////////////////////////////////////////////////////////////
                               EVENTS
   //////////////////////////////////////////////////////////////*/
@@ -80,6 +83,43 @@ contract HatsModuleFactory {
     if (_initData.length > 0) HatsModule(_instance).setUp(_initData);
     // log the deployment
     emit HatsModuleFactory_ModuleDeployed(_implementation, address(_instance), _hatId, _otherImmutableArgs, _initData);
+  }
+
+  /**
+   * @notice Deploys new HatsModule instances in batch.
+   * Every module is created for a given `_hatId` to a deterministic address, if not already deployed.
+   * Sets up each new instance with initial operational values.
+   * @dev Will revert *after* an instance is deployed if its initial values are invalid.
+   * @param _implementations The addresses of the implementation contracts of which to deploy a clone
+   * @param _hatIds The hats for which to deploy a HatsModule.
+   * @param _otherImmutableArgsArray Other immutable args to pass to the clones as immutable storage.
+   * @param _initDataArray The encoded data to pass to the `setUp` functions of the new HatsModule instances. Leave
+   * empty if no {setUp} is required.
+   * @return success True if all modules were successfully created
+   */
+  function batchCreateHatsModule(
+    address[] memory _implementations,
+    uint256[] memory _hatIds,
+    bytes[] memory _otherImmutableArgsArray,
+    bytes[] memory _initDataArray
+  ) public returns (bool success) {
+    uint256 length = _implementations.length;
+
+    {
+      bool sameLengths =
+        (length == _hatIds.length && length == _otherImmutableArgsArray.length && length == _initDataArray.length);
+      if (!sameLengths) revert BatchArrayLengthMismatch();
+    }
+
+    for (uint256 i = 0; i < length;) {
+      createHatsModule(_implementations[i], _hatIds[i], _otherImmutableArgsArray[i], _initDataArray[i]);
+
+      unchecked {
+        ++i;
+      }
+    }
+
+    success = true;
   }
 
   /**
