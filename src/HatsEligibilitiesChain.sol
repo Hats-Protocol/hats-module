@@ -84,20 +84,24 @@ abstract contract HatsEligibilitiesChain is HatsEligibilityModule {
   {
     uint256 numClauses = NUM_CONJUCTION_CLAUSES();
     uint256 modulesStart = 104 + 32 * numClauses;
-    uint256 clauseOffset = 0;
+    uint256 clauseOffset = modulesStart;
 
+    bool eligibleInClause;
+    bool eligibleInModule;
+    bool standingInModule;
     for (uint256 i = 0; i < numClauses;) {
       uint256 length = _getArgUint256(104 + i * 32);
 
-      bool standingInClause = true;
-      bool eligibleInClause = true;
+      eligibleInClause = true;
       for (uint256 j = 0; j < length;) {
-        address module = _getArgAddress(modulesStart + clauseOffset + 20 * j);
-        (bool eligibleInModule, bool standingInModule) = HatsEligibilityModule(module).getWearerStatus(_wearer, _hatId);
+        address module = _getArgAddress(clauseOffset + 20 * j);
+        (eligibleInModule, standingInModule) = HatsEligibilityModule(module).getWearerStatus(_wearer, _hatId);
 
-        if (!eligibleInModule) {
+        if (!standingInModule) {
+          return (false, false);
+        }
+        if (!eligible && eligibleInClause && !eligibleInModule) {
           eligibleInClause = false;
-          break;
         }
 
         unchecked {
@@ -105,8 +109,8 @@ abstract contract HatsEligibilitiesChain is HatsEligibilityModule {
         }
       }
 
-      if (eligibleInClause) {
-        return (true, true);
+      if (!eligible && eligibleInClause) {
+        eligible = true;
       }
 
       clauseOffset += length * 20;
@@ -115,5 +119,7 @@ abstract contract HatsEligibilitiesChain is HatsEligibilityModule {
         ++i;
       }
     }
+
+    standing = true;
   }
 }
