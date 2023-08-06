@@ -3,16 +3,14 @@ pragma solidity ^0.8.18;
 
 //import { console2 } from "forge-std/Test.sol"; // remove before deploy
 import { HatsModule } from "./HatsModule.sol";
-import { HatsEligibilityModule } from "./HatsEligibilityModule.sol";
+import { HatsToggleModule } from "./HatsToggleModule.sol";
 
 /**
- * @notice Eligibility module that chains any amount of eligibility modules with "and" & "or" logical operations.
+ * @notice Toggle module that chains any amount of toggle modules with "and" & "or" logical operations.
  * Modules are chained in a format of a disjunction of conjuction clauses. For example, (module1 && module2) || module3
  * has 2 conjuction clauses: (module1 && module2), module3. These clauses are chained together with an "or" operation.
- * Eligibility is derived according to these logical operations. However, if a wearere is in a bad standing according to
- * any one of the modules, then the module will return a result of not eligble and is in bad standing.
  */
-contract HatsEligibilitiesChain is HatsEligibilityModule {
+contract HatsTogglesChain is HatsToggleModule {
   /*//////////////////////////////////////////////////////////////
                           PUBLIC  CONSTANTS
     //////////////////////////////////////////////////////////////*/
@@ -92,46 +90,30 @@ contract HatsEligibilitiesChain is HatsEligibilityModule {
   constructor(string memory _version) HatsModule(_version) { }
 
   /**
-   * @notice Get the wearer's status.
+   * @notice Get the hat's status.
    */
-  function getWearerStatus(address _wearer, uint256 _hatId)
-    public
-    view
-    virtual
-    override
-    returns (bool eligible, bool standing)
-  {
+  function getHatStatus(uint256 _hatId) public view override returns (bool) {
     uint256 numClauses = NUM_CONJUCTION_CLAUSES();
     uint256 clauseOffset = 104 + 32 * numClauses; // offset to current clause
 
-    bool eligibleInClause;
-    bool eligibleInModule;
-    bool standingInModule;
-    uint256 clauseIndex;
+    bool activeInClause;
+    bool activeInModule;
     uint256 length;
     address module;
 
-    while (clauseIndex < numClauses) {
+    for (uint256 clauseIndex; clauseIndex < numClauses;) {
       length = _getArgUint256(104 + clauseIndex * 32); // current clause length
 
-      eligibleInClause = true;
-
-      // check eligibility and standing according to current clause
-      for (uint256 moduleIndex = 0; moduleIndex < length;) {
+      activeInClause = true;
+      // check if active according to current clause
+      for (uint256 moduleIndex; moduleIndex < length;) {
         module = _getArgAddress(clauseOffset + 20 * moduleIndex);
-        (eligibleInModule, standingInModule) = HatsEligibilityModule(module).getWearerStatus(_wearer, _hatId);
+        activeInModule = HatsToggleModule(module).getHatStatus(_hatId);
 
-        // bad standing in module -> wearer is not eligible and is in bad standing
-        if (!standingInModule) {
-          return (false, false);
-        }
-
-        /* 
-        not eligible in module -> not eligible in clause. Continue checking the next modules in the 
-        clause in order to check the standing status.
-        */
-        if (eligibleInClause && !eligibleInModule) {
-          eligibleInClause = false;
+        // not active in module -> not active in clause
+        if (!activeInModule) {
+          activeInClause = false;
+          break; // check next clause
         }
 
         unchecked {
@@ -139,45 +121,18 @@ contract HatsEligibilitiesChain is HatsEligibilityModule {
         }
       }
 
+      // active in a caluse -> active hat
+      if (activeInClause) {
+        return true;
+      }
+
       clauseOffset += length * 20; // increment to the next clause
 
       unchecked {
         ++clauseIndex;
       }
-
-      // if eligible, continue to check only standing
-      if (eligibleInClause) {
-        eligible = true;
-        break;
-      }
     }
 
-    // check only standing for remaining modules, in case the wearer is eligible in a previous clause
-    if (clauseIndex < numClauses) {
-      while (clauseIndex < numClauses) {
-        length = _getArgUint256(104 + clauseIndex * 32);
-
-        for (uint256 j = 0; j < length;) {
-          module = _getArgAddress(clauseOffset + 20 * j);
-          (eligibleInModule, standingInModule) = HatsEligibilityModule(module).getWearerStatus(_wearer, _hatId);
-
-          if (!standingInModule) {
-            return (false, false);
-          }
-
-          unchecked {
-            ++j;
-          }
-        }
-
-        clauseOffset += length * 20;
-
-        unchecked {
-          ++clauseIndex;
-        }
-      }
-    }
-
-    standing = true;
+    return false;
   }
 }
