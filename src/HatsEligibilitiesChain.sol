@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-// import { console2 } from "forge-std/Test.sol"; // remove before deploy
+//import { console2 } from "forge-std/Test.sol"; // remove before deploy
 import { HatsModule } from "./HatsModule.sol";
 import { HatsEligibilityModule } from "./HatsEligibilityModule.sol";
 
-abstract contract HatsEligibilitiesChain is HatsEligibilityModule {
+contract HatsEligibilitiesChain is HatsEligibilityModule {
   /*//////////////////////////////////////////////////////////////
                           PUBLIC  CONSTANTS
     //////////////////////////////////////////////////////////////*/
@@ -89,18 +89,21 @@ abstract contract HatsEligibilitiesChain is HatsEligibilityModule {
     bool eligibleInClause;
     bool eligibleInModule;
     bool standingInModule;
-    for (uint256 i = 0; i < numClauses;) {
-      uint256 length = _getArgUint256(104 + i * 32);
+    uint256 clauseIndex;
+    uint256 length;
+    address module;
+
+    while (clauseIndex < numClauses) {
+      length = _getArgUint256(104 + clauseIndex * 32);
 
       eligibleInClause = true;
       for (uint256 j = 0; j < length;) {
-        address module = _getArgAddress(clauseOffset + 20 * j);
+        module = _getArgAddress(clauseOffset + 20 * j);
         (eligibleInModule, standingInModule) = HatsEligibilityModule(module).getWearerStatus(_wearer, _hatId);
-
         if (!standingInModule) {
           return (false, false);
         }
-        if (!eligible && eligibleInClause && !eligibleInModule) {
+        if (eligibleInClause && !eligibleInModule) {
           eligibleInClause = false;
         }
 
@@ -109,14 +112,40 @@ abstract contract HatsEligibilitiesChain is HatsEligibilityModule {
         }
       }
 
-      if (!eligible && eligibleInClause) {
-        eligible = true;
-      }
-
       clauseOffset += length * 20;
 
       unchecked {
-        ++i;
+        ++clauseIndex;
+      }
+      // if eligible, break and continue to check only standing
+      if (eligibleInClause) {
+        eligible = true;
+        break;
+      }
+    }
+
+    if (clauseIndex < numClauses) {
+      while (clauseIndex < numClauses) {
+        length = _getArgUint256(104 + clauseIndex * 32);
+
+        for (uint256 j = 0; j < length;) {
+          module = _getArgAddress(clauseOffset + 20 * j);
+          (eligibleInModule, standingInModule) = HatsEligibilityModule(module).getWearerStatus(_wearer, _hatId);
+
+          if (!standingInModule) {
+            return (false, false);
+          }
+
+          unchecked {
+            ++j;
+          }
+        }
+
+        clauseOffset += length * 20;
+
+        unchecked {
+          ++clauseIndex;
+        }
       }
     }
 
