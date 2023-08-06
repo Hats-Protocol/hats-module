@@ -3,7 +3,7 @@ src = 'src'
 out = 'out'
 libs = ['lib']
 optimizer_runs = 1_000_000
-gas_reports = ["HatsModule", "HatsModuleFactory", "HatsEligibilitiesChain"]
+gas_reports = ["HatsModule", "HatsModuleFactory", "HatsEligibilitiesChain, HatsTogglesChain"]
 auto_detect_solc = false
 solc = "0.8.18"
 remappings = [
@@ -22,7 +22,7 @@ invariant = { runs = 1000 }
 fuzz = { runs = 32 }
 invariant = { runs = 10 }
 # Speed up compilation and tests during development.
-optimizer = false
+optimizer = true
 
 [fmt]
 bracket_spacing = true
