@@ -15,49 +15,6 @@ contract DeployImplementationTest is DeployImplementation, Test {
   Hats public constant HATS = Hats(0x3bc1A0Ad72417f2d411118085256fC53CBdDd137); // v1.hatsprotocol.eth
   HatsModuleFactory constant FACTORY = HatsModuleFactory(0x60f7bE2ffc5672934146713fAe20Df350F21d8E2);
 
-  function deployInstanceTwoModules(
-    uint256 targetHat,
-    uint256 numClauses,
-    uint256[] memory lengths,
-    address module1,
-    address module2
-  ) public returns (HatsTogglesChain) {
-    bytes memory otherImmutableArgs = abi.encodePacked(numClauses, lengths, module1, module2);
-    // deploy the instance
-    return HatsTogglesChain(deployModuleInstance(FACTORY, address(implementation), targetHat, otherImmutableArgs, ""));
-  }
-
-  function deployInstanceThreeModules(
-    uint256 targetHat,
-    uint256 numClauses,
-    uint256[] memory lengths,
-    address module1,
-    address module2,
-    address module3
-  ) public returns (HatsTogglesChain) {
-    bytes memory otherImmutableArgs = abi.encodePacked(numClauses, lengths, module1, module2, module3);
-    // deploy the instance
-    return HatsTogglesChain(deployModuleInstance(FACTORY, address(implementation), targetHat, otherImmutableArgs, ""));
-  }
-
-  function setUp() public virtual {
-    // create and activate a fork, at BLOCK_NUMBER
-    fork = vm.createSelectFork(vm.rpcUrl("goerli"), BLOCK_NUMBER);
-
-    // deploy via the script
-    DeployImplementation.prepare(version, false); // set last arg to true to log deployment
-    DeployImplementation.run();
-  }
-}
-
-/**
- * Scenario with 2 modules.
- * Chaining type: module1 || module2
- * Module1 returns true
- * Module2 returns true
- * Expected result: true
- */
-contract Setup1 is DeployImplementationTest {
   HatsTogglesChain public instance;
   uint256 public tophat;
   uint256 public chainedToggleHat;
@@ -69,15 +26,62 @@ contract Setup1 is DeployImplementationTest {
   uint256[] clauseLengths;
   address module1;
   address module2;
+  address module3;
 
-  function setUp() public virtual override {
-    super.setUp();
+  address[] expectedModules;
+
+  function deployInstanceTwoModules(
+    uint256 targetHat,
+    uint256 numClauses,
+    uint256[] memory lengths,
+    address _module1,
+    address _module2
+  ) public returns (HatsTogglesChain) {
+    bytes memory otherImmutableArgs = abi.encodePacked(numClauses, lengths, _module1, _module2);
+    // deploy the instance
+    return HatsTogglesChain(deployModuleInstance(FACTORY, address(implementation), targetHat, otherImmutableArgs, ""));
+  }
+
+  function deployInstanceThreeModules(
+    uint256 targetHat,
+    uint256 numClauses,
+    uint256[] memory lengths,
+    address _module1,
+    address _module2,
+    address _module3
+  ) public returns (HatsTogglesChain) {
+    bytes memory otherImmutableArgs = abi.encodePacked(numClauses, lengths, _module1, _module2, _module3);
+    // deploy the instance
+    return HatsTogglesChain(deployModuleInstance(FACTORY, address(implementation), targetHat, otherImmutableArgs, ""));
+  }
+
+  function setUp() public virtual {
+    // create and activate a fork, at BLOCK_NUMBER
+    fork = vm.createSelectFork(vm.rpcUrl("goerli"), BLOCK_NUMBER);
+
+    // deploy via the script
+    DeployImplementation.prepare(version, false); // set last arg to true to log deployment
+    DeployImplementation.run();
+
     // set up hats
     tophat = HATS.mintTopHat(dao, "tophat", "dao.eth/tophat");
     vm.startPrank(dao);
     chainedToggleHat =
       HATS.createHat(tophat, "chainedToggleHat", 50, eligibility, toggle, true, "dao.eth/chainedToggleHat");
     vm.stopPrank();
+  }
+}
+
+/**
+ * Scenario with 2 modules.
+ * Chaining type: module1 || module2
+ * Module1 returns true
+ * Module2 returns true
+ * Expected result: true
+ */
+contract Setup1 is DeployImplementationTest {
+  function setUp() public virtual override {
+    super.setUp();
 
     module1 = address(new TestToggleAlwaysActive("test"));
     module2 = address(new TestToggleAlwaysActive("test"));
@@ -94,8 +98,6 @@ contract Setup1 is DeployImplementationTest {
 }
 
 contract TestSetup1 is Setup1 {
-  address[] expectedModules;
-
   function setUp() public virtual override {
     super.setUp();
     expectedModules.push(module1);
@@ -137,26 +139,8 @@ contract TestSetup1 is Setup1 {
  * Expectesd results: true
  */
 contract Setup2 is DeployImplementationTest {
-  HatsTogglesChain public instance;
-  uint256 public tophat;
-  uint256 public chainedToggleHat;
-  address public eligibility = makeAddr("eligibility");
-  address public toggle = makeAddr("toggle");
-  address public dao = makeAddr("dao");
-  address public wearer = makeAddr("wearer");
-
-  uint256[] clauseLengths;
-  address module1;
-  address module2;
-
   function setUp() public virtual override {
     super.setUp();
-    // set up hats
-    tophat = HATS.mintTopHat(dao, "tophat", "dao.eth/tophat");
-    vm.startPrank(dao);
-    chainedToggleHat =
-      HATS.createHat(tophat, "chainedToggleHat", 50, eligibility, toggle, true, "dao.eth/chainedToggleHat");
-    vm.stopPrank();
 
     module1 = address(new TestToggleAlwaysNotActive("test"));
     module2 = address(new TestToggleAlwaysActive("test"));
@@ -173,8 +157,6 @@ contract Setup2 is DeployImplementationTest {
 }
 
 contract TestSetup2 is Setup2 {
-  address[] expectedModules;
-
   function setUp() public virtual override {
     super.setUp();
     expectedModules.push(module1);
@@ -216,26 +198,8 @@ contract TestSetup2 is Setup2 {
  * Expectesd results: true
  */
 contract Setup3 is DeployImplementationTest {
-  HatsTogglesChain public instance;
-  uint256 public tophat;
-  uint256 public chainedToggleHat;
-  address public eligibility = makeAddr("eligibility");
-  address public toggle = makeAddr("toggle");
-  address public dao = makeAddr("dao");
-  address public wearer = makeAddr("wearer");
-
-  uint256[] clauseLengths;
-  address module1;
-  address module2;
-
   function setUp() public virtual override {
     super.setUp();
-    // set up hats
-    tophat = HATS.mintTopHat(dao, "tophat", "dao.eth/tophat");
-    vm.startPrank(dao);
-    chainedToggleHat =
-      HATS.createHat(tophat, "chainedToggleHat", 50, eligibility, toggle, true, "dao.eth/chainedToggleHat");
-    vm.stopPrank();
 
     module1 = address(new TestToggleAlwaysActive("test"));
     module2 = address(new TestToggleAlwaysNotActive("test"));
@@ -252,8 +216,6 @@ contract Setup3 is DeployImplementationTest {
 }
 
 contract TestSetup3 is Setup3 {
-  address[] expectedModules;
-
   function setUp() public virtual override {
     super.setUp();
     expectedModules.push(module1);
@@ -295,26 +257,8 @@ contract TestSetup3 is Setup3 {
  * Expectesd results: false
  */
 contract Setup4 is DeployImplementationTest {
-  HatsTogglesChain public instance;
-  uint256 public tophat;
-  uint256 public chainedToggleHat;
-  address public eligibility = makeAddr("eligibility");
-  address public toggle = makeAddr("toggle");
-  address public dao = makeAddr("dao");
-  address public wearer = makeAddr("wearer");
-
-  uint256[] clauseLengths;
-  address module1;
-  address module2;
-
   function setUp() public virtual override {
     super.setUp();
-    // set up hats
-    tophat = HATS.mintTopHat(dao, "tophat", "dao.eth/tophat");
-    vm.startPrank(dao);
-    chainedToggleHat =
-      HATS.createHat(tophat, "chainedToggleHat", 50, eligibility, toggle, true, "dao.eth/chainedToggleHat");
-    vm.stopPrank();
 
     module1 = address(new TestToggleAlwaysNotActive("test"));
     module2 = address(new TestToggleAlwaysNotActive("test"));
@@ -331,8 +275,6 @@ contract Setup4 is DeployImplementationTest {
 }
 
 contract TestSetup4 is Setup4 {
-  address[] expectedModules;
-
   function setUp() public virtual override {
     super.setUp();
     expectedModules.push(module1);
@@ -374,26 +316,8 @@ contract TestSetup4 is Setup4 {
  * Expectesd results: true
  */
 contract Setup5 is DeployImplementationTest {
-  HatsTogglesChain public instance;
-  uint256 public tophat;
-  uint256 public chainedToggleHat;
-  address public eligibility = makeAddr("eligibility");
-  address public toggle = makeAddr("toggle");
-  address public dao = makeAddr("dao");
-  address public wearer = makeAddr("wearer");
-
-  uint256[] clauseLengths;
-  address module1;
-  address module2;
-
   function setUp() public virtual override {
     super.setUp();
-    // set up hats
-    tophat = HATS.mintTopHat(dao, "tophat", "dao.eth/tophat");
-    vm.startPrank(dao);
-    chainedToggleHat =
-      HATS.createHat(tophat, "chainedToggleHat", 50, eligibility, toggle, true, "dao.eth/chainedToggleHat");
-    vm.stopPrank();
 
     module1 = address(new TestToggleAlwaysActive("test"));
     module2 = address(new TestToggleAlwaysActive("test"));
@@ -409,8 +333,6 @@ contract Setup5 is DeployImplementationTest {
 }
 
 contract TestSetup5 is Setup5 {
-  address[] expectedModules;
-
   function setUp() public virtual override {
     super.setUp();
     expectedModules.push(module1);
@@ -452,26 +374,8 @@ contract TestSetup5 is Setup5 {
  * Expectesd results: false
  */
 contract Setup6 is DeployImplementationTest {
-  HatsTogglesChain public instance;
-  uint256 public tophat;
-  uint256 public chainedToggleHat;
-  address public eligibility = makeAddr("eligibility");
-  address public toggle = makeAddr("toggle");
-  address public dao = makeAddr("dao");
-  address public wearer = makeAddr("wearer");
-
-  uint256[] clauseLengths;
-  address module1;
-  address module2;
-
   function setUp() public virtual override {
     super.setUp();
-    // set up hats
-    tophat = HATS.mintTopHat(dao, "tophat", "dao.eth/tophat");
-    vm.startPrank(dao);
-    chainedToggleHat =
-      HATS.createHat(tophat, "chainedToggleHat", 50, eligibility, toggle, true, "dao.eth/chainedToggleHat");
-    vm.stopPrank();
 
     module1 = address(new TestToggleAlwaysNotActive("test"));
     module2 = address(new TestToggleAlwaysActive("test"));
@@ -487,8 +391,6 @@ contract Setup6 is DeployImplementationTest {
 }
 
 contract TestSetup6 is Setup6 {
-  address[] expectedModules;
-
   function setUp() public virtual override {
     super.setUp();
     expectedModules.push(module1);
@@ -530,26 +432,8 @@ contract TestSetup6 is Setup6 {
  * Expectesd results: false
  */
 contract Setup7 is DeployImplementationTest {
-  HatsTogglesChain public instance;
-  uint256 public tophat;
-  uint256 public chainedToggleHat;
-  address public eligibility = makeAddr("eligibility");
-  address public toggle = makeAddr("toggle");
-  address public dao = makeAddr("dao");
-  address public wearer = makeAddr("wearer");
-
-  uint256[] clauseLengths;
-  address module1;
-  address module2;
-
   function setUp() public virtual override {
     super.setUp();
-    // set up hats
-    tophat = HATS.mintTopHat(dao, "tophat", "dao.eth/tophat");
-    vm.startPrank(dao);
-    chainedToggleHat =
-      HATS.createHat(tophat, "chainedToggleHat", 50, eligibility, toggle, true, "dao.eth/chainedToggleHat");
-    vm.stopPrank();
 
     module1 = address(new TestToggleAlwaysActive("test"));
     module2 = address(new TestToggleAlwaysNotActive("test"));
@@ -565,8 +449,6 @@ contract Setup7 is DeployImplementationTest {
 }
 
 contract TestSetup7 is Setup7 {
-  address[] expectedModules;
-
   function setUp() public virtual override {
     super.setUp();
     expectedModules.push(module1);
@@ -608,26 +490,8 @@ contract TestSetup7 is Setup7 {
  * Expectesd results: false
  */
 contract Setup8 is DeployImplementationTest {
-  HatsTogglesChain public instance;
-  uint256 public tophat;
-  uint256 public chainedToggleHat;
-  address public eligibility = makeAddr("eligibility");
-  address public toggle = makeAddr("toggle");
-  address public dao = makeAddr("dao");
-  address public wearer = makeAddr("wearer");
-
-  uint256[] clauseLengths;
-  address module1;
-  address module2;
-
   function setUp() public virtual override {
     super.setUp();
-    // set up hats
-    tophat = HATS.mintTopHat(dao, "tophat", "dao.eth/tophat");
-    vm.startPrank(dao);
-    chainedToggleHat =
-      HATS.createHat(tophat, "chainedToggleHat", 50, eligibility, toggle, true, "dao.eth/chainedToggleHat");
-    vm.stopPrank();
 
     module1 = address(new TestToggleAlwaysNotActive("test"));
     module2 = address(new TestToggleAlwaysNotActive("test"));
@@ -643,8 +507,6 @@ contract Setup8 is DeployImplementationTest {
 }
 
 contract TestSetup8 is Setup8 {
-  address[] expectedModules;
-
   function setUp() public virtual override {
     super.setUp();
     expectedModules.push(module1);
@@ -687,27 +549,8 @@ contract TestSetup8 is Setup8 {
  * Expectesd results: true
  */
 contract Setup9 is DeployImplementationTest {
-  HatsTogglesChain public instance;
-  uint256 public tophat;
-  uint256 public chainedToggleHat;
-  address public eligibility = makeAddr("eligibility");
-  address public toggle = makeAddr("toggle");
-  address public dao = makeAddr("dao");
-  address public wearer = makeAddr("wearer");
-
-  uint256[] clauseLengths;
-  address module1;
-  address module2;
-  address module3;
-
   function setUp() public virtual override {
     super.setUp();
-    // set up hats
-    tophat = HATS.mintTopHat(dao, "tophat", "dao.eth/tophat");
-    vm.startPrank(dao);
-    chainedToggleHat =
-      HATS.createHat(tophat, "chainedToggleHat", 50, eligibility, toggle, true, "dao.eth/chainedToggleHat");
-    vm.stopPrank();
 
     module1 = address(new TestToggleAlwaysActive("test"));
     module2 = address(new TestToggleAlwaysActive("test"));
@@ -725,8 +568,6 @@ contract Setup9 is DeployImplementationTest {
 }
 
 contract TestSetup9 is Setup9 {
-  address[] expectedModules;
-
   function setUp() public virtual override {
     super.setUp();
     expectedModules.push(module1);
@@ -770,27 +611,8 @@ contract TestSetup9 is Setup9 {
  * Expectesd results: true
  */
 contract Setup10 is DeployImplementationTest {
-  HatsTogglesChain public instance;
-  uint256 public tophat;
-  uint256 public chainedToggleHat;
-  address public eligibility = makeAddr("eligibility");
-  address public toggle = makeAddr("toggle");
-  address public dao = makeAddr("dao");
-  address public wearer = makeAddr("wearer");
-
-  uint256[] clauseLengths;
-  address module1;
-  address module2;
-  address module3;
-
   function setUp() public virtual override {
     super.setUp();
-    // set up hats
-    tophat = HATS.mintTopHat(dao, "tophat", "dao.eth/tophat");
-    vm.startPrank(dao);
-    chainedToggleHat =
-      HATS.createHat(tophat, "chainedToggleHat", 50, eligibility, toggle, true, "dao.eth/chainedToggleHat");
-    vm.stopPrank();
 
     module1 = address(new TestToggleAlwaysNotActive("test"));
     module2 = address(new TestToggleAlwaysActive("test"));
@@ -808,8 +630,6 @@ contract Setup10 is DeployImplementationTest {
 }
 
 contract TestSetup10 is Setup10 {
-  address[] expectedModules;
-
   function setUp() public virtual override {
     super.setUp();
     expectedModules.push(module1);
@@ -853,27 +673,8 @@ contract TestSetup10 is Setup10 {
  * Expectesd results: true
  */
 contract Setup11 is DeployImplementationTest {
-  HatsTogglesChain public instance;
-  uint256 public tophat;
-  uint256 public chainedToggleHat;
-  address public eligibility = makeAddr("eligibility");
-  address public toggle = makeAddr("toggle");
-  address public dao = makeAddr("dao");
-  address public wearer = makeAddr("wearer");
-
-  uint256[] clauseLengths;
-  address module1;
-  address module2;
-  address module3;
-
   function setUp() public virtual override {
     super.setUp();
-    // set up hats
-    tophat = HATS.mintTopHat(dao, "tophat", "dao.eth/tophat");
-    vm.startPrank(dao);
-    chainedToggleHat =
-      HATS.createHat(tophat, "chainedToggleHat", 50, eligibility, toggle, true, "dao.eth/chainedToggleHat");
-    vm.stopPrank();
 
     module1 = address(new TestToggleAlwaysActive("test"));
     module2 = address(new TestToggleAlwaysActive("test"));
@@ -891,8 +692,6 @@ contract Setup11 is DeployImplementationTest {
 }
 
 contract TestSetup11 is Setup11 {
-  address[] expectedModules;
-
   function setUp() public virtual override {
     super.setUp();
     expectedModules.push(module1);
@@ -936,27 +735,8 @@ contract TestSetup11 is Setup11 {
  * Expectesd results: false
  */
 contract Setup12 is DeployImplementationTest {
-  HatsTogglesChain public instance;
-  uint256 public tophat;
-  uint256 public chainedToggleHat;
-  address public eligibility = makeAddr("eligibility");
-  address public toggle = makeAddr("toggle");
-  address public dao = makeAddr("dao");
-  address public wearer = makeAddr("wearer");
-
-  uint256[] clauseLengths;
-  address module1;
-  address module2;
-  address module3;
-
   function setUp() public virtual override {
     super.setUp();
-    // set up hats
-    tophat = HATS.mintTopHat(dao, "tophat", "dao.eth/tophat");
-    vm.startPrank(dao);
-    chainedToggleHat =
-      HATS.createHat(tophat, "chainedToggleHat", 50, eligibility, toggle, true, "dao.eth/chainedToggleHat");
-    vm.stopPrank();
 
     module1 = address(new TestToggleAlwaysNotActive("test"));
     module2 = address(new TestToggleAlwaysNotActive("test"));
@@ -974,8 +754,6 @@ contract Setup12 is DeployImplementationTest {
 }
 
 contract TestSetup12 is Setup12 {
-  address[] expectedModules;
-
   function setUp() public virtual override {
     super.setUp();
     expectedModules.push(module1);
@@ -1019,27 +797,8 @@ contract TestSetup12 is Setup12 {
  * Expectesd results: true
  */
 contract Setup13 is DeployImplementationTest {
-  HatsTogglesChain public instance;
-  uint256 public tophat;
-  uint256 public chainedToggleHat;
-  address public eligibility = makeAddr("eligibility");
-  address public toggle = makeAddr("toggle");
-  address public dao = makeAddr("dao");
-  address public wearer = makeAddr("wearer");
-
-  uint256[] clauseLengths;
-  address module1;
-  address module2;
-  address module3;
-
   function setUp() public virtual override {
     super.setUp();
-    // set up hats
-    tophat = HATS.mintTopHat(dao, "tophat", "dao.eth/tophat");
-    vm.startPrank(dao);
-    chainedToggleHat =
-      HATS.createHat(tophat, "chainedToggleHat", 50, eligibility, toggle, true, "dao.eth/chainedToggleHat");
-    vm.stopPrank();
 
     module1 = address(new TestToggleAlwaysActive("test"));
     module2 = address(new TestToggleAlwaysActive("test"));
@@ -1058,8 +817,6 @@ contract Setup13 is DeployImplementationTest {
 }
 
 contract TestSetup13 is Setup13 {
-  address[] expectedModules;
-
   function setUp() public virtual override {
     super.setUp();
     expectedModules.push(module1);
