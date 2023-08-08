@@ -102,7 +102,8 @@ contract HatsEligibilitiesChain is HatsEligibilityModule {
     returns (bool eligible, bool standing)
   {
     uint256 numClauses = NUM_CONJUCTION_CLAUSES();
-    uint256 clauseOffset = 104 + 32 * numClauses; // offset to current clause
+    uint256 moduleOffset = 104 + 32 * numClauses; // offset to current clause
+    uint256 nextClauseOffset = moduleOffset; // offset to current clause
 
     bool eligibleInClause;
     bool eligibleInModule;
@@ -115,10 +116,10 @@ contract HatsEligibilitiesChain is HatsEligibilityModule {
       length = _getArgUint256(104 + clauseIndex * 32); // current clause length
 
       eligibleInClause = true;
-
+      nextClauseOffset += length * 20;
       // check eligibility and standing according to current clause
-      for (uint256 moduleIndex = 0; moduleIndex < length;) {
-        module = _getArgAddress(clauseOffset + 20 * moduleIndex);
+      while (moduleOffset < nextClauseOffset) {
+        module = _getArgAddress(moduleOffset);
         (eligibleInModule, standingInModule) = HatsEligibilityModule(module).getWearerStatus(_wearer, _hatId);
 
         // bad standing in module -> wearer is not eligible and is in bad standing
@@ -134,12 +135,8 @@ contract HatsEligibilitiesChain is HatsEligibilityModule {
           eligibleInClause = false;
         }
 
-        unchecked {
-          ++moduleIndex;
-        }
+        moduleOffset += 20; // increment to the next clause
       }
-
-      clauseOffset += length * 20; // increment to the next clause
 
       unchecked {
         ++clauseIndex;
@@ -153,28 +150,23 @@ contract HatsEligibilitiesChain is HatsEligibilityModule {
     }
 
     // check only standing for remaining modules, in case the wearer is eligible in a previous clause
-    if (clauseIndex < numClauses) {
-      while (clauseIndex < numClauses) {
-        length = _getArgUint256(104 + clauseIndex * 32);
+    while (clauseIndex < numClauses) {
+      length = _getArgUint256(104 + clauseIndex * 32);
+      nextClauseOffset += length * 20;
 
-        for (uint256 j = 0; j < length;) {
-          module = _getArgAddress(clauseOffset + 20 * j);
-          (eligibleInModule, standingInModule) = HatsEligibilityModule(module).getWearerStatus(_wearer, _hatId);
+      while (moduleOffset < nextClauseOffset) {
+        module = _getArgAddress(moduleOffset);
+        (, standingInModule) = HatsEligibilityModule(module).getWearerStatus(_wearer, _hatId);
 
-          if (!standingInModule) {
-            return (false, false);
-          }
-
-          unchecked {
-            ++j;
-          }
+        if (!standingInModule) {
+          return (false, false);
         }
 
-        clauseOffset += length * 20;
+        moduleOffset += 20;
+      }
 
-        unchecked {
-          ++clauseIndex;
-        }
+      unchecked {
+        ++clauseIndex;
       }
     }
 

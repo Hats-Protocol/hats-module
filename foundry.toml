@@ -27,7 +27,7 @@ invariant = { runs = 1000 }
 fuzz = { runs = 32 }
 invariant = { runs = 10 }
 # Speed up compilation and tests during development.
-optimizer = true
+optimizer = false
 
 [fmt]
 bracket_spacing = true

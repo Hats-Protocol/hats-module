@@ -84,7 +84,7 @@ contract HatsTogglesChain is HatsToggleModule {
                             CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
   /**
-   * @notice Deploy the HatsEligibilitiesChain implementation contract and set its version
+   * @notice Deploy the HatsTogglesChain implementation contract and set its version
    * @dev This is only used to deploy the implementation contract, and should not be used to deploy clones
    */
   constructor(string memory _version) HatsModule(_version) { }
