@@ -3,6 +3,7 @@ src = 'src'
 out = 'out'
 libs = ['lib']
 optimizer_runs = 1_000_000
+bytecode_hash = "none"
 gas_reports = [
   "HatsModule",
   "HatsModuleFactory",
