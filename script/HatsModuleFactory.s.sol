@@ -10,7 +10,7 @@ contract Deploy is Script {
   bytes32 public SALT = bytes32(abi.encode(0x4a75)); // ~ H(4) A(a) T(7) S(5)
 
   // default values
-  string public version = "0.3.0"; // increment with each deploy
+  string public version = "0.4.0"; // increment with each deploy
   bool private verbose = true;
 
   /// @notice Override default values, if desired
