@@ -12,7 +12,7 @@ abstract contract HatsToggleModule is HatsModule, IHatsToggle {
    */
 
   /*//////////////////////////////////////////////////////////////
-                      HATS ELIGIBILITY FUNCTION
+                      HATS TOGGLE FUNCTION
   //////////////////////////////////////////////////////////////*/
 
   /// @inheritdoc IHatsToggle

@@ -15,7 +15,7 @@ import { HatsEligibilityModule } from "./HatsEligibilityModule.sol";
 contract HatsEligibilitiesChain is HatsEligibilityModule {
   /*//////////////////////////////////////////////////////////////
                           PUBLIC  CONSTANTS
-    //////////////////////////////////////////////////////////////*/
+  //////////////////////////////////////////////////////////////*/
 
   /**
    * This contract is a clone with immutable args, which means that it is deployed with a set of
@@ -84,12 +84,17 @@ contract HatsEligibilitiesChain is HatsEligibilityModule {
 
   /*//////////////////////////////////////////////////////////////
                             CONSTRUCTOR
-    //////////////////////////////////////////////////////////////*/
+  //////////////////////////////////////////////////////////////*/
+
   /**
    * @notice Deploy the HatsEligibilitiesChain implementation contract and set its version
    * @dev This is only used to deploy the implementation contract, and should not be used to deploy clones
    */
   constructor(string memory _version) HatsModule(_version) { }
+
+  /*//////////////////////////////////////////////////////////////
+                      HATS ELIGIBILITY FUNCTION
+  //////////////////////////////////////////////////////////////*/
 
   /**
    * @notice Get the wearer's status.

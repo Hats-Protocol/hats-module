@@ -13,7 +13,7 @@ import { HatsToggleModule } from "./HatsToggleModule.sol";
 contract HatsTogglesChain is HatsToggleModule {
   /*//////////////////////////////////////////////////////////////
                           PUBLIC  CONSTANTS
-    //////////////////////////////////////////////////////////////*/
+  //////////////////////////////////////////////////////////////*/
 
   /**
    * This contract is a clone with immutable args, which means that it is deployed with a set of
@@ -88,6 +88,10 @@ contract HatsTogglesChain is HatsToggleModule {
    * @dev This is only used to deploy the implementation contract, and should not be used to deploy clones
    */
   constructor(string memory _version) HatsModule(_version) { }
+
+  /*//////////////////////////////////////////////////////////////
+                        HATS TOGGLE FUNCTION
+  //////////////////////////////////////////////////////////////*/
 
   /**
    * @notice Get the hat's status.
