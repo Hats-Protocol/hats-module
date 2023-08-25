@@ -62,7 +62,13 @@ contract HatsModule is IHatsModule, Clone, Initializable {
   //////////////////////////////////////////////////////////////*/
 
   /// @inheritdoc IHatsModule
-  function setUp(bytes calldata _initData) public virtual initializer { }
+  function setUp(bytes calldata _initData) public initializer {
+    /// @dev Allow for instances to be initialized without any init data
+    if (_initData.length > 0) _setUp(_initData);
+  }
+
+  /// @dev Override this function to set initial operational values for module instances
+  function _setUp(bytes calldata _initData) internal virtual { }
 
   /*//////////////////////////////////////////////////////////////
                             CONSTRUCTOR

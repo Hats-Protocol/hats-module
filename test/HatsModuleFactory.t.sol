@@ -227,6 +227,10 @@ contract CreateHatsModule is WithImplementationTest {
     assertEq(HatsModule(instance).IMPLEMENTATION(), implementation, "IMPLEMENTATION");
     assertEq(address(HatsModule(instance).HATS()), address(hats), "HATS");
     assertEq(HatsModule(instance).version(), MODULE_VERSION, "version");
+
+    // instance should be initialized even if initData is empty, so Initializable should cause {setUp} to revert
+    vm.expectRevert("Initializable: contract is already initialized");
+    HatsModule(instance).setUp(initData);
   }
 
   function test_createHatsModule_alreadyDeployed_reverts() public {

@@ -79,8 +79,9 @@ contract HatsModuleFactory {
 
     // deploy the clone to a deterministic address
     _instance = _createHatsModule(_implementation, _hatId, _otherImmutableArgs);
-    // set up the toggle with initial operational values, if any
-    if (_initData.length > 0) HatsModule(_instance).setUp(_initData);
+    // set up the module with initial operational values
+    // _initData can be empty; {Hats.Module.setUp} will still initialize the module
+    HatsModule(_instance).setUp(_initData);
     // log the deployment
     emit HatsModuleFactory_ModuleDeployed(_implementation, address(_instance), _hatId, _otherImmutableArgs, _initData);
   }
