@@ -69,8 +69,8 @@ contract HatsModuleFactory {
   function createHatsModule(
     address _implementation,
     uint256 _hatId,
-    bytes memory _otherImmutableArgs,
-    bytes memory _initData
+    bytes calldata _otherImmutableArgs,
+    bytes calldata _initData
   ) public returns (address _instance) {
     // check if a HatsModule has already been deployed for these parameters
     if (deployed(_implementation, _hatId, _otherImmutableArgs)) {
@@ -99,10 +99,10 @@ contract HatsModuleFactory {
    * @return success True if all modules were successfully created
    */
   function batchCreateHatsModule(
-    address[] memory _implementations,
-    uint256[] memory _hatIds,
-    bytes[] memory _otherImmutableArgsArray,
-    bytes[] memory _initDataArray
+    address[] calldata _implementations,
+    uint256[] calldata _hatIds,
+    bytes[] calldata _otherImmutableArgsArray,
+    bytes[] calldata _initDataArray
   ) public returns (bool success) {
     uint256 length = _implementations.length;
 
@@ -128,7 +128,7 @@ contract HatsModuleFactory {
    * @param _hatId The hat for which to predict the HatsModule instance address
    * @return The predicted address of the deployed instance
    */
-  function getHatsModuleAddress(address _implementation, uint256 _hatId, bytes memory _otherImmutableArgs)
+  function getHatsModuleAddress(address _implementation, uint256 _hatId, bytes calldata _otherImmutableArgs)
     public
     view
     returns (address)
@@ -146,7 +146,7 @@ contract HatsModuleFactory {
    * @param _otherImmutableArgs Other immutable args to pass to the clone as immutable storage.
    * @return True if an instance has already been deployed for the given hat
    */
-  function deployed(address _implementation, uint256 _hatId, bytes memory _otherImmutableArgs)
+  function deployed(address _implementation, uint256 _hatId, bytes calldata _otherImmutableArgs)
     public
     view
     returns (bool)
@@ -164,7 +164,7 @@ contract HatsModuleFactory {
    * @param _hatId The hat for which to deploy a HatsModule
    * @return _instance The address of the deployed HatsModule
    */
-  function _createHatsModule(address _implementation, uint256 _hatId, bytes memory _otherImmutableArgs)
+  function _createHatsModule(address _implementation, uint256 _hatId, bytes calldata _otherImmutableArgs)
     internal
     returns (address _instance)
   {
@@ -198,7 +198,7 @@ contract HatsModuleFactory {
    *  - Any `_otherImmutableArgs`
    * @return The encoded arguments
    */
-  function _encodeArgs(address _implementation, uint256 _hatId, bytes memory _otherImmutableArgs)
+  function _encodeArgs(address _implementation, uint256 _hatId, bytes calldata _otherImmutableArgs)
     internal
     view
     returns (bytes memory)

@@ -51,7 +51,7 @@ contract DeployFactory is HatsModuleFactoryTest {
 contract FactoryHarness is HatsModuleFactory {
   constructor(IHats _hats, string memory _version) HatsModuleFactory(_hats, _version) { }
 
-  function encodeArgs(address _implementation, uint256 _hatId, bytes memory _otherImmutableArgs)
+  function encodeArgs(address _implementation, uint256 _hatId, bytes calldata _otherImmutableArgs)
     public
     view
     returns (bytes memory)
@@ -71,7 +71,7 @@ contract FactoryHarness is HatsModuleFactory {
     return _getHatsModuleAddress(_implementation, _arg, _salt);
   }
 
-  function createModule(address _implementation, uint256 _hatId, bytes memory _otherImmutableArgs)
+  function createModule(address _implementation, uint256 _hatId, bytes calldata _otherImmutableArgs)
     public
     returns (address)
   {
