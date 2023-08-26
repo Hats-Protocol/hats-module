@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.18;
+pragma solidity ^0.8.19;
 
 import { Test, console2 } from "forge-std/Test.sol";
 import { HatsTogglesChain } from "../src/HatsTogglesChain.sol";
@@ -13,7 +13,7 @@ contract DeployImplementationTest is DeployImplementation, Test {
   uint256 public fork;
   uint256 public BLOCK_NUMBER = 9_395_052; // the block number where hats module factory was deployed on Goerli;
   Hats public constant HATS = Hats(0x3bc1A0Ad72417f2d411118085256fC53CBdDd137); // v1.hatsprotocol.eth
-  HatsModuleFactory constant FACTORY = HatsModuleFactory(0x60f7bE2ffc5672934146713fAe20Df350F21d8E2);
+  HatsModuleFactory public FACTORY;
 
   HatsTogglesChain public instance;
   uint256 public tophat;
@@ -58,6 +58,9 @@ contract DeployImplementationTest is DeployImplementation, Test {
   function setUp() public virtual {
     // create and activate a fork, at BLOCK_NUMBER
     fork = vm.createSelectFork(vm.rpcUrl("goerli"), BLOCK_NUMBER);
+
+    // deploy the factory
+    FACTORY = deployModuleFactory(HATS, SALT, version);
 
     // deploy via the script
     DeployImplementation.prepare(version, false); // set last arg to true to log deployment
@@ -105,7 +108,7 @@ contract TestSetup1 is Setup1 {
   }
 
   function test_deployImplementation() public {
-    assertEq(implementation.version_(), "0.1.0");
+    assertEq(implementation.version_(), version);
   }
 
   function test_instanceNumClauses() public {
@@ -164,7 +167,7 @@ contract TestSetup2 is Setup2 {
   }
 
   function test_deployImplementation() public {
-    assertEq(implementation.version_(), "0.1.0");
+    assertEq(implementation.version_(), version);
   }
 
   function test_instanceNumClauses() public {
@@ -187,6 +190,11 @@ contract TestSetup2 is Setup2 {
   function test_hatStatusInHats() public {
     bool active = HATS.isActive(chainedToggleHat);
     assertEq(active, true);
+  }
+
+  function test_initialized() public {
+    vm.expectRevert("Initializable: contract is already initialized");
+    instance.setUp(abi.encode("setUp attempt"));
   }
 }
 
@@ -223,7 +231,7 @@ contract TestSetup3 is Setup3 {
   }
 
   function test_deployImplementation() public {
-    assertEq(implementation.version_(), "0.1.0");
+    assertEq(implementation.version_(), version);
   }
 
   function test_instanceNumClauses() public {
@@ -282,7 +290,7 @@ contract TestSetup4 is Setup4 {
   }
 
   function test_deployImplementation() public {
-    assertEq(implementation.version_(), "0.1.0");
+    assertEq(implementation.version_(), version);
   }
 
   function test_instanceNumClauses() public {
@@ -340,7 +348,7 @@ contract TestSetup5 is Setup5 {
   }
 
   function test_deployImplementation() public {
-    assertEq(implementation.version_(), "0.1.0");
+    assertEq(implementation.version_(), version);
   }
 
   function test_instanceNumClauses() public {
@@ -398,7 +406,7 @@ contract TestSetup6 is Setup6 {
   }
 
   function test_deployImplementation() public {
-    assertEq(implementation.version_(), "0.1.0");
+    assertEq(implementation.version_(), version);
   }
 
   function test_instanceNumClauses() public {
@@ -456,7 +464,7 @@ contract TestSetup7 is Setup7 {
   }
 
   function test_deployImplementation() public {
-    assertEq(implementation.version_(), "0.1.0");
+    assertEq(implementation.version_(), version);
   }
 
   function test_instanceNumClauses() public {
@@ -514,7 +522,7 @@ contract TestSetup8 is Setup8 {
   }
 
   function test_deployImplementation() public {
-    assertEq(implementation.version_(), "0.1.0");
+    assertEq(implementation.version_(), version);
   }
 
   function test_instanceNumClauses() public {
@@ -576,7 +584,7 @@ contract TestSetup9 is Setup9 {
   }
 
   function test_deployImplementation() public {
-    assertEq(implementation.version_(), "0.1.0");
+    assertEq(implementation.version_(), version);
   }
 
   function test_instanceNumClauses() public {
@@ -638,7 +646,7 @@ contract TestSetup10 is Setup10 {
   }
 
   function test_deployImplementation() public {
-    assertEq(implementation.version_(), "0.1.0");
+    assertEq(implementation.version_(), version);
   }
 
   function test_instanceNumClauses() public {
@@ -700,7 +708,7 @@ contract TestSetup11 is Setup11 {
   }
 
   function test_deployImplementation() public {
-    assertEq(implementation.version_(), "0.1.0");
+    assertEq(implementation.version_(), version);
   }
 
   function test_instanceNumClauses() public {
@@ -762,7 +770,7 @@ contract TestSetup12 is Setup12 {
   }
 
   function test_deployImplementation() public {
-    assertEq(implementation.version_(), "0.1.0");
+    assertEq(implementation.version_(), version);
   }
 
   function test_instanceNumClauses() public {
@@ -825,7 +833,7 @@ contract TestSetup13 is Setup13 {
   }
 
   function test_deployImplementation() public {
-    assertEq(implementation.version_(), "0.1.0");
+    assertEq(implementation.version_(), version);
   }
 
   function test_instanceNumClauses() public {

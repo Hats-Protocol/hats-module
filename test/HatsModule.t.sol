@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.18;
+pragma solidity ^0.8.19;
 
 import { Test, console2 } from "forge-std/Test.sol";
 import { HatsModule, IHats, Deploy, HatsModuleFactoryTest } from "../test/HatsModuleFactory.t.sol";
@@ -14,7 +14,7 @@ contract HatsModuleHarness is HatsModule {
     return _getArgBytes(72, length);
   }
 
-  function setUp(bytes calldata _initData) public override initializer {
+  function _setUp(bytes calldata _initData) internal override {
     emit HatsModuleHarness_SetUp(_initData);
   }
 }

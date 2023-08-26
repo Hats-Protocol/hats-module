@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.18;
+pragma solidity ^0.8.19;
 
 import { Script, console2 } from "forge-std/Script.sol";
 import { HatsModule, HatsModuleFactory, IHats, deployModuleFactory } from "src/utils/DeployFunctions.sol";
@@ -10,7 +10,7 @@ contract Deploy is Script {
   bytes32 public SALT = bytes32(abi.encode(0x4a75)); // ~ H(4) A(a) T(7) S(5)
 
   // default values
-  string public version = "0.4.0"; // increment with each deploy
+  string public version = "0.5.0"; // increment with each deploy
   bool private verbose = true;
 
   /// @notice Override default values, if desired

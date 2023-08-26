@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.18;
+pragma solidity ^0.8.19;
 
 import { Test, console2 } from "forge-std/Test.sol";
 import { HatsModule, HatsModuleFactory, IHats, Deploy } from "../script/HatsModuleFactory.s.sol";
@@ -51,7 +51,7 @@ contract DeployFactory is HatsModuleFactoryTest {
 contract FactoryHarness is HatsModuleFactory {
   constructor(IHats _hats, string memory _version) HatsModuleFactory(_hats, _version) { }
 
-  function encodeArgs(address _implementation, uint256 _hatId, bytes memory _otherImmutableArgs)
+  function encodeArgs(address _implementation, uint256 _hatId, bytes calldata _otherImmutableArgs)
     public
     view
     returns (bytes memory)
@@ -71,11 +71,16 @@ contract FactoryHarness is HatsModuleFactory {
     return _getHatsModuleAddress(_implementation, _arg, _salt);
   }
 
-  function createModule(address _implementation, uint256 _hatId, bytes memory _otherImmutableArgs)
+  function createModule(address _implementation, uint256 _hatId, bytes calldata _otherImmutableArgs)
     public
     returns (address)
   {
-    return _createHatsModule(_implementation, _hatId, _otherImmutableArgs);
+    // encode the Hats contract adddress and _hatId to pass as immutable args when deploying the clone
+    bytes memory args = _encodeArgs(_implementation, _hatId, _otherImmutableArgs);
+    // calculate the determinstic address salt based on the args
+    bytes32 _salt = _calculateSalt(args);
+    // deploy the clone to the deterministic address
+    return LibClone.cloneDeterministic(_implementation, args, _salt);
   }
 }
 
@@ -227,6 +232,10 @@ contract CreateHatsModule is WithImplementationTest {
     assertEq(HatsModule(instance).IMPLEMENTATION(), implementation, "IMPLEMENTATION");
     assertEq(address(HatsModule(instance).HATS()), address(hats), "HATS");
     assertEq(HatsModule(instance).version(), MODULE_VERSION, "version");
+
+    // instance should be initialized even if initData is empty, so Initializable should cause {setUp} to revert
+    vm.expectRevert("Initializable: contract is already initialized");
+    HatsModule(instance).setUp(initData);
   }
 
   function test_createHatsModule_alreadyDeployed_reverts() public {

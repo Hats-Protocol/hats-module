@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.18;
+pragma solidity ^0.8.19;
 
 // import { console2 } from "forge-std/Test.sol"; // remove before deploy
 import { HatsModule } from "./HatsModule.sol";
@@ -11,10 +11,10 @@ contract HatsModuleFactory {
                             CUSTOM ERRORS
   //////////////////////////////////////////////////////////////*/
 
-  /// @notice Emitted if attempting to deploy a clone of `implementation` for a given `hatId` and `otherImmutableArgs`
-  /// that already has
-  /// a
-  /// HatsModule deployment
+  /**
+   * @notice Emitted if attempting to deploy a clone of `implementation` for a given `hatId` and `otherImmutableArgs`
+   * that already has a HatsModule deployment
+   */
   error HatsModuleFactory_ModuleAlreadyDeployed(address implementation, uint256 hatId, bytes otherImmutableArgs);
 
   /// @notice Emitted when array arguments to a batch function have mismatching lengths
@@ -69,18 +69,24 @@ contract HatsModuleFactory {
   function createHatsModule(
     address _implementation,
     uint256 _hatId,
-    bytes memory _otherImmutableArgs,
-    bytes memory _initData
+    bytes calldata _otherImmutableArgs,
+    bytes calldata _initData
   ) public returns (address _instance) {
+    // calculate unique params that will be used to check for existing deployments and deploy the clone if none exists
+    bytes memory args = _encodeArgs(_implementation, _hatId, _otherImmutableArgs);
+    bytes32 _salt = _calculateSalt(args);
+
     // check if a HatsModule has already been deployed for these parameters
-    if (deployed(_implementation, _hatId, _otherImmutableArgs)) {
+    if (_getHatsModuleAddress(_implementation, args, _salt).code.length > 0) {
       revert HatsModuleFactory_ModuleAlreadyDeployed(_implementation, _hatId, _otherImmutableArgs);
     }
 
     // deploy the clone to a deterministic address
-    _instance = _createHatsModule(_implementation, _hatId, _otherImmutableArgs);
-    // set up the toggle with initial operational values, if any
-    if (_initData.length > 0) HatsModule(_instance).setUp(_initData);
+    _instance = LibClone.cloneDeterministic(_implementation, args, _salt);
+
+    // set up and initialize the module instance; empty _initData is allowed
+    HatsModule(_instance).setUp(_initData);
+
     // log the deployment
     emit HatsModuleFactory_ModuleDeployed(_implementation, address(_instance), _hatId, _otherImmutableArgs, _initData);
   }
@@ -98,10 +104,10 @@ contract HatsModuleFactory {
    * @return success True if all modules were successfully created
    */
   function batchCreateHatsModule(
-    address[] memory _implementations,
-    uint256[] memory _hatIds,
-    bytes[] memory _otherImmutableArgsArray,
-    bytes[] memory _initDataArray
+    address[] calldata _implementations,
+    uint256[] calldata _hatIds,
+    bytes[] calldata _otherImmutableArgsArray,
+    bytes[] calldata _initDataArray
   ) public returns (bool success) {
     uint256 length = _implementations.length;
 
@@ -127,7 +133,7 @@ contract HatsModuleFactory {
    * @param _hatId The hat for which to predict the HatsModule instance address
    * @return The predicted address of the deployed instance
    */
-  function getHatsModuleAddress(address _implementation, uint256 _hatId, bytes memory _otherImmutableArgs)
+  function getHatsModuleAddress(address _implementation, uint256 _hatId, bytes calldata _otherImmutableArgs)
     public
     view
     returns (address)
@@ -145,7 +151,7 @@ contract HatsModuleFactory {
    * @param _otherImmutableArgs Other immutable args to pass to the clone as immutable storage.
    * @return True if an instance has already been deployed for the given hat
    */
-  function deployed(address _implementation, uint256 _hatId, bytes memory _otherImmutableArgs)
+  function deployed(address _implementation, uint256 _hatId, bytes calldata _otherImmutableArgs)
     public
     view
     returns (bool)
@@ -157,23 +163,6 @@ contract HatsModuleFactory {
   /*//////////////////////////////////////////////////////////////
                             INTERNAL FUNCTIONS
   //////////////////////////////////////////////////////////////*/
-
-  /**
-   * @notice Deployes a new HatsModule contract for a given hat, to a deterministic address
-   * @param _hatId The hat for which to deploy a HatsModule
-   * @return _instance The address of the deployed HatsModule
-   */
-  function _createHatsModule(address _implementation, uint256 _hatId, bytes memory _otherImmutableArgs)
-    internal
-    returns (address _instance)
-  {
-    // encode the Hats contract adddress and _hatId to pass as immutable args when deploying the clone
-    bytes memory args = _encodeArgs(_implementation, _hatId, _otherImmutableArgs);
-    // calculate the determinstic address salt based on the args
-    bytes32 _salt = _calculateSalt(args);
-    // deploy the clone to the deterministic address
-    _instance = LibClone.cloneDeterministic(_implementation, args, _salt);
-  }
 
   /**
    * @notice Predicts the address of a HatsModule contract given the encoded arguments and salt
@@ -197,7 +186,7 @@ contract HatsModuleFactory {
    *  - Any `_otherImmutableArgs`
    * @return The encoded arguments
    */
-  function _encodeArgs(address _implementation, uint256 _hatId, bytes memory _otherImmutableArgs)
+  function _encodeArgs(address _implementation, uint256 _hatId, bytes calldata _otherImmutableArgs)
     internal
     view
     returns (bytes memory)

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.18;
+pragma solidity ^0.8.19;
 
 // import { console2 } from "forge-std/Test.sol"; // remove before deploy
 import { IHats } from "hats-protocol/Interfaces/IHats.sol";
@@ -62,7 +62,12 @@ contract HatsModule is IHatsModule, Clone, Initializable {
   //////////////////////////////////////////////////////////////*/
 
   /// @inheritdoc IHatsModule
-  function setUp(bytes calldata _initData) public virtual initializer { }
+  function setUp(bytes calldata _initData) public initializer {
+    _setUp(_initData);
+  }
+
+  /// @dev Override this function to set initial operational values for module instances
+  function _setUp(bytes calldata _initData) internal virtual { }
 
   /*//////////////////////////////////////////////////////////////
                             CONSTRUCTOR

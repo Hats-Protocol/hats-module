@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.18;
+pragma solidity ^0.8.19;
 
 import { Script, console2 } from "forge-std/Script.sol";
 import { HatsEligibilitiesChain } from "../src/HatsEligibilitiesChain.sol";
@@ -10,7 +10,7 @@ contract DeployImplementation is Script {
   bytes32 public SALT = keccak256("lets add some salt to this meal");
 
   // default values
-  string public version = "0.1.0"; // increment with each deploy
+  string public version = "0.2.0"; // increment with each deploy
   bool private verbose = true;
 
   /// @notice Override default values, if desired
@@ -36,5 +36,5 @@ contract DeployImplementation is Script {
 
 // forge script script/HatsEligibilitiesChain.s.sol:DeployImplementation -f ethereum --broadcast --verify
 // forge verify-contract --chain-id 5 --num-of-optimizations 1000000 --watch --constructor-args $(cast abi-encode
-// "constructor(string)" "0.1.0") --compiler-version v0.8.18 0xd7c10b09453007993960FE2f92cE497A32059E08
+// "constructor(string)" "0.1.0") --compiler-version v0.8.19 0xd7c10b09453007993960FE2f92cE497A32059E08
 // src/HatsEligibilitiesChain.sol:HatsEligibilitiesChain --etherscan-api-key
