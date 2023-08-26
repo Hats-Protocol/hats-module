@@ -75,7 +75,12 @@ contract FactoryHarness is HatsModuleFactory {
     public
     returns (address)
   {
-    return _createHatsModule(_implementation, _hatId, _otherImmutableArgs);
+    // encode the Hats contract adddress and _hatId to pass as immutable args when deploying the clone
+    bytes memory args = _encodeArgs(_implementation, _hatId, _otherImmutableArgs);
+    // calculate the determinstic address salt based on the args
+    bytes32 _salt = _calculateSalt(args);
+    // deploy the clone to the deterministic address
+    return LibClone.cloneDeterministic(_implementation, args, _salt);
   }
 }
 
