@@ -118,11 +118,11 @@ contract TestSetup1 is Setup1 {
   }
 
   function test_instanceNumClauses() public {
-    assertEq(instance.NUM_CONJUCTION_CLAUSES(), uint256(2));
+    assertEq(instance.NUM_CONJUNCTION_CLAUSES(), uint256(2));
   }
 
   function test_instanceClauseLengths() public {
-    assertEq(instance.CONJUCTION_CLAUSE_LENGTHS(), clauseLengths);
+    assertEq(instance.CONJUNCTION_CLAUSE_LENGTHS(), clauseLengths);
   }
 
   function test_instanceModules() public {
@@ -185,11 +185,11 @@ contract TestSetup2 is Setup2 {
   }
 
   function test_instanceNumClauses() public {
-    assertEq(instance.NUM_CONJUCTION_CLAUSES(), uint256(2));
+    assertEq(instance.NUM_CONJUNCTION_CLAUSES(), uint256(2));
   }
 
   function test_instanceClauseLengths() public {
-    assertEq(instance.CONJUCTION_CLAUSE_LENGTHS(), clauseLengths);
+    assertEq(instance.CONJUNCTION_CLAUSE_LENGTHS(), clauseLengths);
   }
 
   function test_instanceModules() public {
@@ -247,11 +247,11 @@ contract TestSetup3 is Setup3 {
   }
 
   function test_instanceNumClauses() public {
-    assertEq(instance.NUM_CONJUCTION_CLAUSES(), uint256(2));
+    assertEq(instance.NUM_CONJUNCTION_CLAUSES(), uint256(2));
   }
 
   function test_instanceClauseLengths() public {
-    assertEq(instance.CONJUCTION_CLAUSE_LENGTHS(), clauseLengths);
+    assertEq(instance.CONJUNCTION_CLAUSE_LENGTHS(), clauseLengths);
   }
 
   function test_instanceModules() public {
@@ -309,11 +309,11 @@ contract TestSetup4 is Setup4 {
   }
 
   function test_instanceNumClauses() public {
-    assertEq(instance.NUM_CONJUCTION_CLAUSES(), uint256(2));
+    assertEq(instance.NUM_CONJUNCTION_CLAUSES(), uint256(2));
   }
 
   function test_instanceClauseLengths() public {
-    assertEq(instance.CONJUCTION_CLAUSE_LENGTHS(), clauseLengths);
+    assertEq(instance.CONJUNCTION_CLAUSE_LENGTHS(), clauseLengths);
   }
 
   function test_instanceModules() public {
@@ -370,11 +370,11 @@ contract TestSetup5 is Setup5 {
   }
 
   function test_instanceNumClauses() public {
-    assertEq(instance.NUM_CONJUCTION_CLAUSES(), uint256(1));
+    assertEq(instance.NUM_CONJUNCTION_CLAUSES(), uint256(1));
   }
 
   function test_instanceClauseLengths() public {
-    assertEq(instance.CONJUCTION_CLAUSE_LENGTHS(), clauseLengths);
+    assertEq(instance.CONJUNCTION_CLAUSE_LENGTHS(), clauseLengths);
   }
 
   function test_instanceModules() public {
@@ -431,11 +431,11 @@ contract TestSetup6 is Setup6 {
   }
 
   function test_instanceNumClauses() public {
-    assertEq(instance.NUM_CONJUCTION_CLAUSES(), uint256(1));
+    assertEq(instance.NUM_CONJUNCTION_CLAUSES(), uint256(1));
   }
 
   function test_instanceClauseLengths() public {
-    assertEq(instance.CONJUCTION_CLAUSE_LENGTHS(), clauseLengths);
+    assertEq(instance.CONJUNCTION_CLAUSE_LENGTHS(), clauseLengths);
   }
 
   function test_instanceModules() public {
@@ -492,11 +492,11 @@ contract TestSetup7 is Setup7 {
   }
 
   function test_instanceNumClauses() public {
-    assertEq(instance.NUM_CONJUCTION_CLAUSES(), uint256(1));
+    assertEq(instance.NUM_CONJUNCTION_CLAUSES(), uint256(1));
   }
 
   function test_instanceClauseLengths() public {
-    assertEq(instance.CONJUCTION_CLAUSE_LENGTHS(), clauseLengths);
+    assertEq(instance.CONJUNCTION_CLAUSE_LENGTHS(), clauseLengths);
   }
 
   function test_instanceModules() public {
@@ -553,11 +553,11 @@ contract TestSetup8 is Setup8 {
   }
 
   function test_instanceNumClauses() public {
-    assertEq(instance.NUM_CONJUCTION_CLAUSES(), uint256(1));
+    assertEq(instance.NUM_CONJUNCTION_CLAUSES(), uint256(1));
   }
 
   function test_instanceClauseLengths() public {
-    assertEq(instance.CONJUCTION_CLAUSE_LENGTHS(), clauseLengths);
+    assertEq(instance.CONJUNCTION_CLAUSE_LENGTHS(), clauseLengths);
   }
 
   function test_instanceModules() public {
@@ -618,11 +618,11 @@ contract TestSetup9 is Setup9 {
   }
 
   function test_instanceNumClauses() public {
-    assertEq(instance.NUM_CONJUCTION_CLAUSES(), uint256(2));
+    assertEq(instance.NUM_CONJUNCTION_CLAUSES(), uint256(2));
   }
 
   function test_instanceClauseLengths() public {
-    assertEq(instance.CONJUCTION_CLAUSE_LENGTHS(), clauseLengths);
+    assertEq(instance.CONJUNCTION_CLAUSE_LENGTHS(), clauseLengths);
   }
 
   function test_instanceModules() public {
@@ -683,11 +683,11 @@ contract TestSetup10 is Setup10 {
   }
 
   function test_instanceNumClauses() public {
-    assertEq(instance.NUM_CONJUCTION_CLAUSES(), uint256(2));
+    assertEq(instance.NUM_CONJUNCTION_CLAUSES(), uint256(2));
   }
 
   function test_instanceClauseLengths() public {
-    assertEq(instance.CONJUCTION_CLAUSE_LENGTHS(), clauseLengths);
+    assertEq(instance.CONJUNCTION_CLAUSE_LENGTHS(), clauseLengths);
   }
 
   function test_instanceModules() public {
@@ -748,11 +748,11 @@ contract TestSetup11 is Setup11 {
   }
 
   function test_instanceNumClauses() public {
-    assertEq(instance.NUM_CONJUCTION_CLAUSES(), uint256(2));
+    assertEq(instance.NUM_CONJUNCTION_CLAUSES(), uint256(2));
   }
 
   function test_instanceClauseLengths() public {
-    assertEq(instance.CONJUCTION_CLAUSE_LENGTHS(), clauseLengths);
+    assertEq(instance.CONJUNCTION_CLAUSE_LENGTHS(), clauseLengths);
   }
 
   function test_instanceModules() public {
@@ -813,11 +813,11 @@ contract TestSetup12 is Setup12 {
   }
 
   function test_instanceNumClauses() public {
-    assertEq(instance.NUM_CONJUCTION_CLAUSES(), uint256(2));
+    assertEq(instance.NUM_CONJUNCTION_CLAUSES(), uint256(2));
   }
 
   function test_instanceClauseLengths() public {
-    assertEq(instance.CONJUCTION_CLAUSE_LENGTHS(), clauseLengths);
+    assertEq(instance.CONJUNCTION_CLAUSE_LENGTHS(), clauseLengths);
   }
 
   function test_instanceModules() public {
@@ -878,11 +878,11 @@ contract TestSetup13 is Setup13 {
   }
 
   function test_instanceNumClauses() public {
-    assertEq(instance.NUM_CONJUCTION_CLAUSES(), uint256(2));
+    assertEq(instance.NUM_CONJUNCTION_CLAUSES(), uint256(2));
   }
 
   function test_instanceClauseLengths() public {
-    assertEq(instance.CONJUCTION_CLAUSE_LENGTHS(), clauseLengths);
+    assertEq(instance.CONJUNCTION_CLAUSE_LENGTHS(), clauseLengths);
   }
 
   function test_instanceModules() public {
@@ -944,11 +944,11 @@ contract TestSetup14 is Setup14 {
   }
 
   function test_instanceNumClauses() public {
-    assertEq(instance.NUM_CONJUCTION_CLAUSES(), uint256(3));
+    assertEq(instance.NUM_CONJUNCTION_CLAUSES(), uint256(3));
   }
 
   function test_instanceClauseLengths() public {
-    assertEq(instance.CONJUCTION_CLAUSE_LENGTHS(), clauseLengths);
+    assertEq(instance.CONJUNCTION_CLAUSE_LENGTHS(), clauseLengths);
   }
 
   function test_instanceModules() public {

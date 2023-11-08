@@ -7,8 +7,8 @@ import { HatsEligibilityModule } from "./HatsEligibilityModule.sol";
 
 /**
  * @notice Eligibility module that chains any amount of eligibility modules with "and" & "or" logical operations.
- * Modules are chained in a format of a disjunction of conjuction clauses. For example, (module1 && module2) || module3
- * has 2 conjuction clauses: (module1 && module2), module3. These clauses are chained together with an "or" operation.
+ * Modules are chained in a format of a disjunction of conjunction clauses. For example, (module1 && module2) || module3
+ * has 2 conjunction clauses: (module1 && module2), module3. These clauses are chained together with an "or" operation.
  * Eligibility is derived according to these logical operations. However, if a wearere is in a bad standing according to
  * any one of the modules, then the module will return a result of not eligble and is in bad standing.
  */
@@ -35,31 +35,31 @@ contract HatsEligibilitiesChain is HatsEligibilityModule {
    * 0                               | IMPLEMENTATION            | address   | 20                         | HatsModule |
    * 20                              | HATS                      | address   | 20                         | HatsModule |
    * 40                              | hatId                     | uint256   | 32                         | HatsModule |
-   * 72                              | NUM_CONJUCTION_CLAUSES    | uint256   | 32                         | this       |
-   * 104                             | CONJUCTION_CLAUSE_LENGTHS | uint256[] | NUM_CONJUCTION_CLAUSES* 32 | this       |
-   * 104+(NUM_CONJUCTION_CLAUSES*32) | MODULES                   | address[] | NUM_MODULES * 20           | this       |
+   * 72                              | NUM_CONJUNCTION_CLAUSES    | uint256   | 32                         | this       |
+   * 104                             | CONJUNCTION_CLAUSE_LENGTHS | uint256[] | NUM_CONJUNCTION_CLAUSES* 32 | this       |
+   * 104+(NUM_CONJUNCTION_CLAUSES*32) | MODULES                   | address[] | NUM_MODULES * 20           | this       |
    * ------------------------------------------------------------------------------------------------------------------+
    */
 
   /**
-   * @notice Get the number of conjuction clauses
+   * @notice Get the number of conjunction clauses
    */
-  function NUM_CONJUCTION_CLAUSES() public pure returns (uint256) {
+  function NUM_CONJUNCTION_CLAUSES() public pure returns (uint256) {
     return _getArgUint256(72);
   }
 
   /**
    * @notice Get the a list of the lengths of every conjusction clause.
    */
-  function CONJUCTION_CLAUSE_LENGTHS() public pure returns (uint256[] memory) {
-    return _getArgUint256Array(104, NUM_CONJUCTION_CLAUSES());
+  function CONJUNCTION_CLAUSE_LENGTHS() public pure returns (uint256[] memory) {
+    return _getArgUint256Array(104, NUM_CONJUNCTION_CLAUSES());
   }
 
   /**
    * @notice Get all module addresses.
    */
   function MODULES() public pure returns (address[] memory) {
-    uint256[] memory lengths = CONJUCTION_CLAUSE_LENGTHS();
+    uint256[] memory lengths = CONJUNCTION_CLAUSE_LENGTHS();
     uint256 numClauses = lengths.length;
     uint256 numModules;
     for (uint256 i = 0; i < numClauses;) {
@@ -106,7 +106,7 @@ contract HatsEligibilitiesChain is HatsEligibilityModule {
     override
     returns (bool eligible, bool standing)
   {
-    uint256 numClauses = NUM_CONJUCTION_CLAUSES();
+    uint256 numClauses = NUM_CONJUNCTION_CLAUSES();
     uint256 moduleOffset = 104 + 32 * numClauses; // offset to current clause
     uint256 nextClauseOffset = moduleOffset; // offset to current clause
 
