@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-// import { console2 } from "forge-std/Test.sol"; // remove before deploy
 import { IHats } from "hats-protocol/Interfaces/IHats.sol";
 import { IHatsModule } from "./interfaces/IHatsModule.sol";
 import { Clone } from "solady/utils/Clone.sol";
