@@ -34,6 +34,8 @@ contract DeployImplementationTest is DeployImplementation, Test {
 
   address[] expectedModules;
 
+  uint256 saltNonce = 1;
+
   function deployInstanceTwoModules(
     uint256 targetHat,
     uint256 numClauses,
@@ -43,8 +45,9 @@ contract DeployImplementationTest is DeployImplementation, Test {
   ) public returns (HatsEligibilitiesChain) {
     bytes memory otherImmutableArgs = abi.encodePacked(numClauses, lengths, _module1, _module2);
     // deploy the instance
-    return
-      HatsEligibilitiesChain(deployModuleInstance(FACTORY, address(implementation), targetHat, otherImmutableArgs, ""));
+    return HatsEligibilitiesChain(
+      deployModuleInstance(FACTORY, address(implementation), targetHat, otherImmutableArgs, "", saltNonce)
+    );
   }
 
   function deployInstanceThreeModules(
@@ -57,8 +60,9 @@ contract DeployImplementationTest is DeployImplementation, Test {
   ) public returns (HatsEligibilitiesChain) {
     bytes memory otherImmutableArgs = abi.encodePacked(numClauses, lengths, _module1, _module2, _module3);
     // deploy the instance
-    return
-      HatsEligibilitiesChain(deployModuleInstance(FACTORY, address(implementation), targetHat, otherImmutableArgs, ""));
+    return HatsEligibilitiesChain(
+      deployModuleInstance(FACTORY, address(implementation), targetHat, otherImmutableArgs, "", saltNonce)
+    );
   }
 
   function setUp() public virtual {

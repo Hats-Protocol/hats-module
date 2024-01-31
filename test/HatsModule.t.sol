@@ -59,16 +59,21 @@ contract DeployInstance is HatsModuleTest {
     // expect event emitted with the initData
     vm.expectEmit(true, true, true, true);
     emit HatsModuleFactory_ModuleDeployed(
-      address(impl), factory.getHatsModuleAddress(address(impl), hatId, otherArgs), hatId, otherArgs, initData
+      address(impl),
+      factory.getHatsModuleAddress(address(impl), hatId, otherArgs, saltNonce),
+      hatId,
+      otherArgs,
+      initData,
+      saltNonce
     );
     // deploy an instance of HatsModuleHarness via the factory
     // inst = HatsModuleHarness(factory.createHatsModule(address(impl), hatId, otherArgs, initData));
-    inst = HatsModuleHarness(deployModuleInstance(factory, address(impl), hatId, otherArgs, initData));
+    inst = HatsModuleHarness(deployModuleInstance(factory, address(impl), hatId, otherArgs, initData, saltNonce));
   }
 
   function test_immutables() public {
     // deploy an instance of HatsModuleHarness via the factory
-    inst = HatsModuleHarness(deployModuleInstance(factory, address(impl), hatId, otherArgs, initData));
+    inst = HatsModuleHarness(deployModuleInstance(factory, address(impl), hatId, otherArgs, initData, saltNonce));
 
     assertEq(address(inst.IMPLEMENTATION()), address(impl), "incorrect implementation address");
     assertEq(address(inst.HATS()), address(hats), "incorrect hats address");
@@ -78,14 +83,14 @@ contract DeployInstance is HatsModuleTest {
 
   function test_version() public {
     // deploy an instance of HatsModuleHarness via the factory
-    inst = HatsModuleHarness(deployModuleInstance(factory, address(impl), hatId, otherArgs, initData));
+    inst = HatsModuleHarness(deployModuleInstance(factory, address(impl), hatId, otherArgs, initData, saltNonce));
 
     assertEq(inst.version(), MODULE_VERSION, "incorrect module version");
   }
 
   function test_setUp_cannotBeCalledTwice() public {
     // deploy an instance of HatsModuleHarness via the factory
-    inst = HatsModuleHarness(deployModuleInstance(factory, address(impl), hatId, otherArgs, initData));
+    inst = HatsModuleHarness(deployModuleInstance(factory, address(impl), hatId, otherArgs, initData, saltNonce));
 
     // expect revert if setUp is called again
     vm.expectRevert();
@@ -97,6 +102,6 @@ contract DeployInstance is HatsModuleTest {
     vm.expectEmit(true, true, true, true);
     emit HatsModuleHarness_SetUp(initData);
     // deploy an instance of HatsModuleHarness via the factory
-    inst = HatsModuleHarness(deployModuleInstance(factory, address(impl), hatId, otherArgs, initData));
+    inst = HatsModuleHarness(deployModuleInstance(factory, address(impl), hatId, otherArgs, initData, saltNonce));
   }
 }
