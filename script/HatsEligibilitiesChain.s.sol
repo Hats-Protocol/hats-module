@@ -24,7 +24,7 @@ contract DeployImplementation is Script {
     address deployer = vm.rememberKey(privKey);
     vm.startBroadcast(deployer);
 
-    implementation = new HatsEligibilitiesChain{ salt: SALT}(version);
+    implementation = new HatsEligibilitiesChain{ salt: SALT }(version);
 
     vm.stopBroadcast();
 
