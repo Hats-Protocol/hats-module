@@ -20,18 +20,20 @@ contract Deploy is Script {
   }
 
   function run() public {
-    uint256 privKey = vm.envUint("PRIVATE_KEY");
-    address deployer = vm.rememberKey(privKey);
-    vm.startBroadcast(deployer);
+    //uint256 privKey = vm.envUint("PRIVATE_KEY");
+    //address deployer = vm.rememberKey(privKey);
+    vm.startBroadcast();
 
-    factory = deployModuleFactory(hats, SALT, version);
 
-    vm.stopBroadcast();
+     factory = new HatsModuleFactory(hats, version);
+	 console2.logAddress(address(factory));
 
-    if (verbose) {
-      console2.log("HatsModuleFactory:", address(factory));
-    }
-  }
+     vm.stopBroadcast();
+
+  //   if (verbose) {
+  //     console2.log("HatsModuleFactory:", address(factory));
+  //   }
+   }
 }
 
 // forge script script/Deploy.s.sol -f ethereum --broadcast --verify
