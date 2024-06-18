@@ -7,23 +7,22 @@ import { IHatsModule } from "./interfaces/IHatsModule.sol";
 import { Initializable } from "@openzeppelin-contracts/contracts/proxy/utils/Initializable.sol";
 
 contract HatsModule is IHatsModule {
-  address zkImplementation;
-  IHats zkHats;
-  uint256 zkHatId;
+  IHats immutable zkHats;
+  uint256 immutable zkHatId;
 
   /// @inheritdoc IHatsModule
-  function IMPLEMENTATION() public pure returns (address) {
-    return address(0);
+  function IMPLEMENTATION() public view returns (address) {
+    return address(this);
   }
 
   /// @inheritdoc IHatsModule
-  function HATS() public pure returns (IHats) {
-    return IHats(address(0));
+  function HATS() public view returns (IHats) {
+    return zkHats;
   }
 
   /// @inheritdoc IHatsModule
-  function hatId() public pure returns (uint256) {
-    return 0;
+  function hatId() public view returns (uint256) {
+    return zkHatId;
   }
 
   /// @inheritdoc IHatsModule
@@ -52,7 +51,9 @@ contract HatsModule is IHatsModule {
 
   /// @notice Deploy the implementation contract and set its version
   /// @dev This is only used to deploy the implementation contract, and should not be used to deploy clones
-  constructor(string memory _version) {
+  constructor(string memory _version, address _hat, uint256 _hatId) {
     version_ = _version;
+	zkHats = IHats(_hat);
+	zkHatId = _hatId;
   }
 }
