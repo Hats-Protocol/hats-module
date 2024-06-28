@@ -5,13 +5,13 @@ import { IHats } from "hats-protocol/Interfaces/IHats.sol";
 
 interface IHatsModule {
   /// @notice Hats Protocol address
-  function HATS() external pure returns (IHats);
+  function HATS() external view returns (IHats);
 
   /// @notice The address of the implementation contract of which this instance is a clone
-  function IMPLEMENTATION() external pure returns (address);
+  function IMPLEMENTATION() external view returns (address);
 
   /// @notice The hat id for which this HatsModule instance has been deployed
-  function hatId() external pure returns (uint256);
+  function hatId() external view returns (uint256);
 
   /**
    * @notice Sets up this instance with initial operational values (`_initData`)
