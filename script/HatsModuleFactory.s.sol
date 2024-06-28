@@ -2,10 +2,8 @@
 pragma solidity ^0.8.19;
 
 import { Script, console2 } from "forge-std/Script.sol";
-// import { HatsModule, HatsModuleFactory, IHats, deployModuleFactory } from "src/utils/DeployFunctions.sol";
 
 contract Deploy is Script {
-  // IHats public constant hats = IHats(0x3bc1A0Ad72417f2d411118085256fC53CBdDd137); // v1.hatsprotocol.eth
   bytes32 public SALT = bytes32(abi.encode(0x4a75)); // ~ H(4) A(a) T(7) S(5)
 
   // default values
@@ -20,7 +18,6 @@ contract Deploy is Script {
 
   function run() public {
     //uint256 privKey = vm.envUint("PRIVATE_KEY");
-    //address deployer = vm.rememberKey(privKey);
     vm.startBroadcast();
 
 
