@@ -22,22 +22,26 @@ contract HatsModuleTest is Test {
 
   function testFuzz_version(string memory _version) public {
     _deployModule(_version, hatAddress, hatId);
-    assertEq(hatsModule.version_(), _version, "incorrect module version");
+    hatsModule.setUp(abi.encode("another setUp attempt"));
+    assertEq(hatsModule.version(), _version, "incorrect module version");
   }
 
   function testFuzz_hatAddress(address _hatAddress) public {
     _deployModule(MODULE_VERSION, _hatAddress, hatId);
+    hatsModule.setUp(abi.encode("another setUp attempt"));
     assertEq(address(hatsModule.HATS()), _hatAddress, "incorrect hat address");
   }
 
   function testFuzz_hatId(uint256 _hatId) public {
     _deployModule(MODULE_VERSION, hatAddress, _hatId);
+    hatsModule.setUp(abi.encode("another setUp attempt"));
     assertEq(hatsModule.hatId(), _hatId, "incorrect hat id");
   }
 
   function test_setUpCannotBeCalledTwice() public {
-    // expect revert if setUp is called again
-    vm.expectRevert();
+    hatsModule = new HatsModule(MODULE_VERSION, hatAddress, hatId);
+    hatsModule.setUp(abi.encode("another setUp attempt"));
+    vm.expectRevert(HatsModule.AlreadyInitialized.selector);
     hatsModule.setUp(abi.encode("another setUp attempt"));
   }
 }

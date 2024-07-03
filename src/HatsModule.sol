@@ -4,11 +4,13 @@ pragma solidity ^0.8.19;
 // import { console2 } from "forge-std/Test.sol"; // remove before deploy
 import { IHats } from "hats-protocol/Interfaces/IHats.sol";
 import { IHatsModule } from "./interfaces/IHatsModule.sol";
-import { Initializable } from "@openzeppelin-contracts/contracts/proxy/utils/Initializable.sol";
 
-contract HatsModule is IHatsModule, Initializable {
+contract HatsModule is IHatsModule {
   IHats immutable zkHats;
   uint256 immutable zkHatId;
+  bool initialized = false;
+
+  error AlreadyInitialized();
 
   /// @inheritdoc IHatsModule
   function IMPLEMENTATION() public view returns (address) {
@@ -38,7 +40,11 @@ contract HatsModule is IHatsModule, Initializable {
   //////////////////////////////////////////////////////////////*/
 
   /// @inheritdoc IHatsModule
-  function setUp(bytes calldata _initData) public initializer {
+  function setUp(bytes calldata _initData) public {
+	if (initialized) {
+	  	  revert AlreadyInitialized();
+	}
+	initialized = true;
     _setUp(_initData);
   }
 
