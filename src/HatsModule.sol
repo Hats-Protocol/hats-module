@@ -6,7 +6,7 @@ import { IHats } from "hats-protocol/Interfaces/IHats.sol";
 import { IHatsModule } from "./interfaces/IHatsModule.sol";
 import { Initializable } from "@openzeppelin-contracts/contracts/proxy/utils/Initializable.sol";
 
-contract HatsModule is IHatsModule {
+contract HatsModule is IHatsModule, Initializable {
   IHats immutable zkHats;
   uint256 immutable zkHatId;
 
@@ -38,7 +38,7 @@ contract HatsModule is IHatsModule {
   //////////////////////////////////////////////////////////////*/
 
   /// @inheritdoc IHatsModule
-  function setUp(bytes calldata _initData) public {
+  function setUp(bytes calldata _initData) public initializer {
     _setUp(_initData);
   }
 
@@ -53,7 +53,7 @@ contract HatsModule is IHatsModule {
   /// @dev This is only used to deploy the implementation contract, and should not be used to deploy clones
   constructor(string memory _version, address _hat, uint256 _hatId) {
     version_ = _version;
-	zkHats = IHats(_hat);
-	zkHatId = _hatId;
+    zkHats = IHats(_hat);
+    zkHatId = _hatId;
   }
 }
