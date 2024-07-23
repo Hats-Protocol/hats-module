@@ -41,10 +41,10 @@ contract HatsModule is IHatsModule {
 
   /// @inheritdoc IHatsModule
   function setUp(bytes calldata _initData) public {
-	if (initialized) {
-	  	  revert AlreadyInitialized();
-	}
-	initialized = true;
+    if (initialized) {
+      revert AlreadyInitialized();
+    }
+    initialized = true;
     _setUp(_initData);
   }
 
