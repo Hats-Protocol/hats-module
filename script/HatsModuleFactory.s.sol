@@ -39,8 +39,8 @@ contract Deploy is Script {
 /*
 
 forge verify-contract --chain-id 84532 --num-of-optimizations 1000000 --watch \
---constructor-args $(cast abi-encode "constructor(address, string)" "0x3bc1A0Ad72417f2d411118085256fC53CBdDd137" "0.7.0") \
+--constructor-args $(cast abi-encode "constructor(address, string)" "0x3bc1A0Ad72417f2d411118085256fC53CBdDd137"
+"0.7.0") \
 --compiler-version v0.8.19 0x0a3f85fa597B6a967271286aA0724811acDF5CD9 src/HatsModuleFactory.sol:HatsModuleFactory \
 --etherscan-api-key $ETHERSCAN_KEY
-
 */
